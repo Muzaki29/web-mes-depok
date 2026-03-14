@@ -8,9 +8,19 @@ use Illuminate\Http\Request;
 
 class ProgramController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $programs = Program::where('status', 'active')->latest()->get();
+        $query = Program::where('status', 'active');
+
+        if ($request->has('q')) {
+            $search = $request->q;
+            $query->where(function($q) use ($search) {
+                $q->where('title', 'like', "%{$search}%")
+                  ->orWhere('description', 'like', "%{$search}%");
+            });
+        }
+
+        $programs = $query->latest()->get();
         return view('public.programs', compact('programs'));
     }
 

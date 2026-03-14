@@ -49,11 +49,11 @@ Route::get('/documents/{slug}/download', [PublicDocumentController::class, 'down
 Route::get('/events', \App\Livewire\PublicEvents::class)->name('events');
 Route::get('/events/{slug}', [PublicEventController::class, 'show'])->name('events.show');
 Route::post('/events/{slug}/register', [PublicEventController::class, 'register'])->name('events.register');
-Route::view('/contact', 'public.contact')->name('contact');
+Route::get('/contact', [PublicContactController::class, 'create'])->name('contact');
 Route::post('/contact', [PublicContactController::class, 'store'])->name('contact.submit');
 Route::get('/programs', [PublicProgramController::class, 'index'])->name('programs');
 Route::get('/programs/{slug}', [PublicProgramController::class, 'show'])->name('programs.show');
-Route::view('/membership', 'public.membership')->name('membership');
+Route::get('/membership', [PublicMembershipController::class, 'create'])->name('membership');
 Route::post('/membership', [PublicMembershipController::class, 'store'])->name('membership.submit');
 
 Route::view('/about', 'public.about.profile')->name('about');

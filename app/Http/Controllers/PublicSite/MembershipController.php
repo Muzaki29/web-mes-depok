@@ -5,14 +5,26 @@ namespace App\Http\Controllers\PublicSite;
 use App\Http\Controllers\Controller;
 use App\Models\MembershipApplication;
 use App\Notifications\MembershipApplicationSubmitted;
+use App\Services\CaptchaService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Notification;
 
 class MembershipController extends Controller
 {
+    public function create()
+    {
+        $captcha = CaptchaService::generate();
+        return view('public.membership', compact('captcha'));
+    }
+
     public function store(Request $request)
     {
         $data = $request->validate([
+            'captcha' => ['required', function ($attribute, $value, $fail) {
+                if (!CaptchaService::verify($value)) {
+                    $fail('Kode keamanan salah. Silakan coba lagi.');
+                }
+            }],
             'name' => 'required|string|max:255',
             'email' => 'required|email|max:255',
             'phone' => 'nullable|string|max:50',

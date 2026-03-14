@@ -80,7 +80,7 @@
         <!-- Quick Actions & Recent Members -->
         <div class="lg:col-span-2 space-y-8">
             <!-- Quick Actions -->
-            <div class="bg-gradient-to-r from-emerald-600 to-emerald-800 rounded-2xl p-6 text-white shadow-lg">
+            <div class="bg-linear-to-r from-emerald-600 to-emerald-800 rounded-2xl p-6 text-white shadow-lg">
                 <h3 class="text-lg font-bold mb-4">Akses Cepat</h3>
                 <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
                     <a href="{{ route('admin.members') }}" class="flex flex-col items-center justify-center p-4 bg-white/10 rounded-xl hover:bg-white/20 transition-colors backdrop-blur-sm cursor-pointer">
@@ -158,7 +158,7 @@
                 <ul class="space-y-4">
                     @forelse(($latestRegistrations ?? []) as $r)
                         <li class="flex items-start gap-3">
-                            <div class="flex-shrink-0 w-8 h-8 rounded-full bg-emerald-100 flex items-center justify-center text-emerald-600 text-xs font-bold">
+                            <div class="shrink-0 w-8 h-8 rounded-full bg-emerald-100 flex items-center justify-center text-emerald-600 text-xs font-bold">
                                 {{ substr($r->name, 0, 2) }}
                             </div>
                             <div>
@@ -179,7 +179,7 @@
                     @forelse(($recentDocuments ?? []) as $d)
                         <li class="flex items-center justify-between p-3 bg-gray-50 rounded-xl hover:bg-gray-100 transition-colors">
                             <div class="flex items-center gap-3 overflow-hidden">
-                                <svg class="w-5 h-5 text-gray-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                                <svg class="w-5 h-5 text-gray-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
                                 <span class="text-sm text-gray-700 truncate">{{ $d->title }}</span>
                             </div>
                             <span class="text-xs text-gray-400 whitespace-nowrap">{{ $d->created_at->format('d M') }}</span>
@@ -196,7 +196,7 @@
                 <div class="relative pl-4 border-l-2 border-gray-100 space-y-6">
                     @forelse(($activities ?? []) as $activity)
                         <div class="relative">
-                            <div class="absolute -left-[21px] top-1.5 w-3 h-3 bg-gray-200 rounded-full border-2 border-white ring-1 ring-gray-100"></div>
+                            <div class="absolute -left-5.25 top-1.5 w-3 h-3 bg-gray-200 rounded-full border-2 border-white ring-1 ring-gray-100"></div>
                             <p class="text-sm text-gray-600">{{ $activity }}</p>
                             <span class="text-xs text-gray-400">Baru saja</span>
                         </div>

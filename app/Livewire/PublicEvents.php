@@ -3,10 +3,12 @@
 namespace App\Livewire;
 
 use Livewire\Component;
+use Livewire\Attributes\Layout;
 use App\Models\Event;
 use App\Models\Partner;
 use Livewire\WithPagination;
 
+#[Layout('layouts.public')]
 class PublicEvents extends Component
 {
     use WithPagination;
@@ -82,6 +84,6 @@ class PublicEvents extends Component
             'pastEvents' => $past,
             'stats' => $stats,
             'partners' => Partner::all()
-        ])->layout('layouts.public');
+        ]);
     }
 }

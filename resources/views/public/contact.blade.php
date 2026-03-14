@@ -143,6 +143,20 @@
                         @error('message')<p class="text-sm text-red-600 mt-1">{{ $message }}</p>@enderror
                     </div>
 
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Kode Keamanan</label>
+                        <div class="flex flex-col sm:flex-row gap-4 items-start sm:items-center">
+                            <div class="bg-gray-100 rounded-lg p-2 border border-gray-200 select-none shrink-0">
+                                <img src="{{ $captcha }}" alt="Captcha" class="h-12 w-auto rounded">
+                            </div>
+                            <div class="flex-1 w-full">
+                                <input type="text" name="captcha" class="w-full rounded-lg border-gray-300 focus:border-emerald-500 focus:ring-emerald-500 shadow-sm transition-colors uppercase tracking-widest font-bold text-center sm:text-left" placeholder="MASUKKAN KODE" required autocomplete="off">
+                            </div>
+                        </div>
+                        <p class="text-xs text-gray-500 mt-1">Masukkan kode karakter yang terlihat pada gambar diatas.</p>
+                        @error('captcha')<p class="text-sm text-red-600 mt-1">{{ $message }}</p>@enderror
+                    </div>
+
                     <div class="flex items-center justify-end">
                         <button type="submit" class="bg-emerald-600 text-white px-8 py-3 rounded-lg font-semibold hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500 transition-colors shadow-lg shadow-emerald-200">
                             Kirim Pesan
