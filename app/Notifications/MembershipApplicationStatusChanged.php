@@ -11,9 +11,7 @@ class MembershipApplicationStatusChanged extends Notification
 {
     use Queueable;
 
-    public function __construct(public MembershipApplication $application, public string $status)
-    {
-    }
+    public function __construct(public MembershipApplication $application, public string $status) {}
 
     public function via(object $notifiable): array
     {
@@ -29,4 +27,3 @@ class MembershipApplicationStatusChanged extends Notification
             ->line('Terima kasih atas ketertarikan Anda bergabung bersama MES Depok.');
     }
 }
-

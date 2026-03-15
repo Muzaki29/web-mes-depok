@@ -186,25 +186,25 @@
                     <p class="mt-3 text-sm text-gray-400">Gerakan sosial ekonomi untuk kemaslahatan umat di Depok.</p>
                 </div>
                 <div>
-                    <p class="text-sm font-semibold text-white">Quick Links</p>
+                    <p class="text-sm font-semibold text-white">Tautan Cepat</p>
                     <ul class="mt-3 space-y-2 text-sm">
-                        <li><a class="hover:text-white" href="{{ url('/about') }}">About Us</a></li>
-                        <li><a class="hover:text-white" href="{{ url('/programs') }}">Programs</a></li>
-                        <li><a class="hover:text-white" href="{{ url('/events') }}">Events</a></li>
-                        <li><a class="hover:text-white" href="{{ url('/news') }}">News</a></li>
+                        <li><a class="hover:text-white" href="{{ url('/about') }}">Tentang Kami</a></li>
+                        <li><a class="hover:text-white" href="{{ url('/programs') }}">Program</a></li>
+                        <li><a class="hover:text-white" href="{{ url('/events') }}">Agenda</a></li>
+                        <li><a class="hover:text-white" href="{{ url('/news') }}">Berita</a></li>
                     </ul>
                 </div>
                 <div>
-                    <p class="text-sm font-semibold text-white">Services</p>
+                    <p class="text-sm font-semibold text-white">Layanan</p>
                     <ul class="mt-3 space-y-2 text-sm">
-                        <li><a class="hover:text-white" href="#">Consultation</a></li>
-                        <li><a class="hover:text-white" href="#">Certification</a></li>
-                        <li><a class="hover:text-white" href="#">Training</a></li>
-                        <li><a class="hover:text-white" href="#">Resources</a></li>
+                        <li><a class="hover:text-white" href="#">Konsultasi</a></li>
+                        <li><a class="hover:text-white" href="#">Sertifikasi</a></li>
+                        <li><a class="hover:text-white" href="#">Pelatihan</a></li>
+                        <li><a class="hover:text-white" href="#">Sumber Daya</a></li>
                     </ul>
                 </div>
                 <div>
-                    <p class="text-sm font-semibold text-white">Contact</p>
+                    <p class="text-sm font-semibold text-white">Kontak</p>
                     <ul class="mt-3 space-y-2 text-sm">
                         <li><a class="hover:text-white" href="mailto:info@mesdepok.org">info@mesdepok.org</a></li>
                         <li><span>+62 812-3456-7890</span></li>
@@ -213,10 +213,10 @@
                 </div>
             </div>
             <div class="mt-8 border-t border-gray-800 pt-6 flex items-center justify-between text-sm">
-                <p class="text-gray-400">© {{ date('Y') }} MES Depok. All rights reserved.</p>
+                <p class="text-gray-400">© {{ date('Y') }} MES Depok. Hak cipta dilindungi.</p>
                 <div class="flex items-center gap-6">
-                    <a href="#" class="hover:text-white">Privacy Policy</a>
-                    <a href="#" class="hover:text-white">Terms of Service</a>
+                    <a href="#" class="hover:text-white">Kebijakan Privasi</a>
+                    <a href="#" class="hover:text-white">Syarat & Ketentuan</a>
                 </div>
             </div>
         </div>

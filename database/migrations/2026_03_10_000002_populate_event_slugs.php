@@ -1,9 +1,7 @@
 <?php
 
-use Illuminate\Database\Migrations\Migration;
-use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Support\Facades\Schema;
 use App\Models\Event;
+use Illuminate\Database\Migrations\Migration;
 use Illuminate\Support\Str;
 
 return new class extends Migration
@@ -21,7 +19,7 @@ return new class extends Migration
                 $originalSlug = $slug;
                 $count = 1;
                 while (Event::where('slug', $slug)->where('id', '!=', $event->id)->exists()) {
-                    $slug = $originalSlug . '-' . $count++;
+                    $slug = $originalSlug.'-'.$count++;
                 }
                 $event->update(['slug' => $slug]);
             }

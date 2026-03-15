@@ -4,7 +4,8 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration {
+return new class extends Migration
+{
     public function up(): void
     {
         Schema::create('roles', function (Blueprint $table) {
@@ -22,7 +23,7 @@ return new class extends Migration {
             $table->unsignedBigInteger('subject_id')->nullable();
             $table->json('properties')->nullable();
             $table->timestamps();
-            $table->index(['subject_type','subject_id']);
+            $table->index(['subject_type', 'subject_id']);
         });
     }
 
@@ -32,4 +33,3 @@ return new class extends Migration {
         Schema::dropIfExists('roles');
     }
 };
-

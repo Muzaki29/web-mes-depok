@@ -24,7 +24,7 @@ class PartnersController extends Controller
 
     public function edit(int $id)
     {
-        return view('admin.partners.edit', ['id'=>$id]);
+        return view('admin.partners.edit', ['id' => $id]);
     }
 
     public function update(Request $request, int $id)
@@ -37,4 +37,3 @@ class PartnersController extends Controller
         return redirect()->route('admin.partners');
     }
 }
-

@@ -4,27 +4,33 @@ namespace App\Livewire;
 
 use App\Models\Member;
 use App\Models\MemberCategory;
+use Livewire\Attributes\On;
 use Livewire\Component;
 use Livewire\WithPagination;
-use Illuminate\Support\Arr;
-use Livewire\Attributes\On;
 
 class MembersTable extends Component
 {
     use WithPagination;
 
     public string $search = '';
+
     public int $perPage = 10;
-    
+
     // Bulk Actions
     public array $selected = [];
+
     public bool $selectAll = false;
+
     public bool $showBulkDelete = false;
 
     public ?int $editingId = null;
+
     public bool $showCreate = false;
+
     public bool $showEdit = false;
+
     public bool $showDelete = false;
+
     public array $form = [
         'name' => '',
         'membership_no' => '',
@@ -41,12 +47,12 @@ class MembersTable extends Component
     public function updatedSelectAll($value)
     {
         if ($value) {
-            $this->selected = $this->getQuery()->pluck('id')->map(fn($id) => (string)$id)->toArray();
+            $this->selected = $this->getQuery()->pluck('id')->map(fn ($id) => (string) $id)->toArray();
         } else {
             $this->selected = [];
         }
     }
-    
+
     public function updatedSelected()
     {
         $this->selectAll = false;
@@ -59,9 +65,9 @@ class MembersTable extends Component
             ->when($this->search !== '', function ($q) {
                 $s = '%'.$this->search.'%';
                 $q->where(function ($sub) use ($s) {
-                    $sub->where('name','like',$s)
-                        ->orWhere('membership_no','like',$s)
-                        ->orWhere('status','like',$s);
+                    $sub->where('name', 'like', $s)
+                        ->orWhere('membership_no', 'like', $s)
+                        ->orWhere('status', 'like', $s);
                 });
             })
             ->orderBy('name');
@@ -78,7 +84,7 @@ class MembersTable extends Component
     {
         $this->form = [
             'name' => '',
-            'membership_no' => 'EC-'.date('Y').'-'.rand(1000,9999),
+            'membership_no' => 'EC-'.date('Y').'-'.rand(1000, 9999),
             'category' => 'Standard',
             'status' => 'Active',
             'valid_until' => date('Y-m-d', strtotime('+1 year')),
@@ -104,7 +110,7 @@ class MembersTable extends Component
             'valid_until' => $data['valid_until'] ?? null,
         ]);
         $this->showCreate = false;
-        $this->dispatch('toast', message: 'Member created');
+        $this->dispatch('toast', message: 'Anggota berhasil dibuat');
     }
 
     public function edit(int $id): void
@@ -141,7 +147,7 @@ class MembersTable extends Component
             'valid_until' => $data['valid_until'] ?? null,
         ]);
         $this->showEdit = false;
-        $this->dispatch('toast', message: 'Member updated');
+        $this->dispatch('toast', message: 'Anggota berhasil diperbarui');
     }
 
     public function confirmDelete(int $id): void
@@ -154,7 +160,7 @@ class MembersTable extends Component
     {
         Member::whereKey($this->editingId)->delete();
         $this->showDelete = false;
-        $this->dispatch('toast', message: 'Member deleted');
+        $this->dispatch('toast', message: 'Anggota berhasil dihapus');
     }
 
     public function confirmBulkDelete(): void
@@ -170,10 +176,15 @@ class MembersTable extends Component
         $this->selected = [];
         $this->selectAll = false;
         $this->showBulkDelete = false;
-        $this->dispatch('toast', message: 'Selected members deleted');
+        $this->dispatch('toast', message: 'Anggota terpilih berhasil dihapus');
     }
 
     #[On('refreshMembers')]
     public function refreshMembers(): void {}
-}
 
+    #[On('openCreateMember')]
+    public function openCreateMember(): void
+    {
+        $this->create();
+    }
+}

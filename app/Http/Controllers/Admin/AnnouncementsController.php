@@ -27,7 +27,8 @@ class AnnouncementsController extends Controller
             'published_at' => 'nullable|date',
         ]);
         Announcement::create($data);
-        return redirect()->route('admin.announcements')->with('status','Announcement created');
+
+        return redirect()->route('admin.announcements')->with('status', 'Pengumuman berhasil dibuat.');
     }
 
     public function edit(Announcement $announcement)
@@ -44,13 +45,14 @@ class AnnouncementsController extends Controller
             'published_at' => 'nullable|date',
         ]);
         $announcement->update($data);
-        return redirect()->route('admin.announcements')->with('status','Announcement updated');
+
+        return redirect()->route('admin.announcements')->with('status', 'Pengumuman berhasil diperbarui.');
     }
 
     public function destroy(Announcement $announcement)
     {
         $announcement->delete();
-        return back()->with('status','Announcement deleted');
+
+        return back()->with('status', 'Pengumuman berhasil dihapus.');
     }
 }
-

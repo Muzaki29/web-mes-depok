@@ -15,39 +15,38 @@ class DemoContentSeeder extends Seeder
     {
         // Partners
         if (Partner::count() < 6) {
-            foreach (['OJK','IDX','Bank Syariah','Koperasi','Kampus','Komunitas'] as $name) {
-                Partner::firstOrCreate(['name'=>$name]);
+            foreach (['OJK', 'IDX', 'Bank Syariah', 'Koperasi', 'Kampus', 'Komunitas'] as $name) {
+                Partner::firstOrCreate(['name' => $name]);
             }
         }
 
         // Events
         if (Event::count() < 5) {
-            for ($i=1;$i<=5;$i++) {
+            for ($i = 1; $i <= 5; $i++) {
                 Event::firstOrCreate(
-                    ['title'=>"Webinar Ekonomi Syariah $i"],
-                    ['start_at'=>Carbon::now()->addDays($i*3)]
+                    ['title' => "Webinar Ekonomi Syariah $i"],
+                    ['start_at' => Carbon::now()->addDays($i * 3)]
                 );
             }
         }
 
         // Articles
         if (Article::count() < 9) {
-            for ($i=1;$i<=9;$i++) {
+            for ($i = 1; $i <= 9; $i++) {
                 $title = "Inisiatif Syariah untuk UMKM #$i";
                 Article::updateOrCreate(
-                    ['slug'=>Str::slug($title)],
+                    ['slug' => Str::slug($title)],
                     [
-                        'title'=>$title,
-                        'thumbnail'=>"https://picsum.photos/seed/mes{$i}/640/360",
-                        'excerpt'=>"Gambaran singkat program pemberdayaan UMKM syariah edisi $i di Depok.",
-                        'body'=>"Konten ringkas mengenai kegiatan dan dampak program ke-$i.\nDilengkapi insight praktis bagi pelaku usaha.",
-                        'status'=>'published',
-                        'published_at'=>Carbon::now()->subDays($i),
-                        'author_id'=>1
+                        'title' => $title,
+                        'thumbnail' => "https://picsum.photos/seed/mes{$i}/640/360",
+                        'excerpt' => "Gambaran singkat program pemberdayaan UMKM syariah edisi $i di Depok.",
+                        'body' => "Konten ringkas mengenai kegiatan dan dampak program ke-$i.\nDilengkapi insight praktis bagi pelaku usaha.",
+                        'status' => 'published',
+                        'published_at' => Carbon::now()->subDays($i),
+                        'author_id' => 1,
                     ]
                 );
             }
         }
     }
 }
-

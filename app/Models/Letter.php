@@ -10,11 +10,10 @@ class Letter extends Model
 {
     use HasFactory, SoftDeletes;
 
-    protected $fillable = ['template_id','direction','number','subject','body'];
+    protected $fillable = ['template_id', 'direction', 'number', 'subject', 'body'];
 
     public function template()
     {
         return $this->belongsTo(LetterTemplate::class, 'template_id');
     }
 }
-

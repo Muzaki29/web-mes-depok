@@ -8,7 +8,8 @@ use Illuminate\Database\Eloquent\Model;
 class Consultation extends Model
 {
     use HasFactory;
-    protected $fillable = ['requester_name','topic','status','scheduled_at'];
+
+    protected $fillable = ['requester_name', 'topic', 'status', 'scheduled_at'];
+
     protected $casts = ['scheduled_at' => 'datetime'];
 }
-

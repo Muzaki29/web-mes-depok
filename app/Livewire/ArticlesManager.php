@@ -4,21 +4,27 @@ namespace App\Livewire;
 
 use App\Models\Article;
 use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 use Livewire\Component;
 use Livewire\WithFileUploads;
-use Illuminate\Support\Str;
-use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Facades\Auth;
 
 class ArticlesManager extends Component
 {
     use WithFileUploads;
+
     public string $search = '';
+
     public int $perPage = 10;
+
     public bool $showCreate = false;
+
     public bool $showEdit = false;
+
     public bool $showDelete = false;
+
     public ?int $editingId = null;
+
     public array $form = [
         'title' => '',
         'excerpt' => '',
@@ -26,19 +32,20 @@ class ArticlesManager extends Component
         'status' => 'draft',
         'published_at' => '',
     ];
+
     public $thumbnailUpload;
 
     public function paginator(): LengthAwarePaginator
     {
         return Article::query()
-            ->when($this->search !== '', fn ($q) => $q->where('title','like','%'.$this->search.'%'))
+            ->when($this->search !== '', fn ($q) => $q->where('title', 'like', '%'.$this->search.'%'))
             ->orderByDesc('id')
             ->paginate($this->perPage, ['*'], 'page', request()->input('page', 1));
     }
 
     public function create(): void
     {
-        $this->form = ['title'=>'','excerpt'=>'','body'=>'','status'=>'draft','published_at'=>''];
+        $this->form = ['title' => '', 'excerpt' => '', 'body' => '', 'status' => 'draft', 'published_at' => ''];
         $this->showCreate = true;
     }
 
@@ -68,7 +75,8 @@ class ArticlesManager extends Component
                         $stored = $webpPath;
                     }
                 }
-            } catch (\Throwable $e) {}
+            } catch (\Throwable $e) {
+            }
             $data['thumbnail'] = $stored;
         }
         Article::create($data);
@@ -115,7 +123,8 @@ class ArticlesManager extends Component
                         $stored = $webpPath;
                     }
                 }
-            } catch (\Throwable $e) {}
+            } catch (\Throwable $e) {
+            }
             $data['thumbnail'] = $stored;
         }
         Article::whereKey($this->editingId)->update($data);
@@ -137,6 +146,6 @@ class ArticlesManager extends Component
 
     public function render()
     {
-        return view('livewire.articles-manager', ['paginator'=>$this->paginator()]);
+        return view('livewire.articles-manager', ['paginator' => $this->paginator()]);
     }
 }

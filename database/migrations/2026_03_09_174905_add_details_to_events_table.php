@@ -12,13 +12,13 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('events', function (Blueprint $table) {
-            if (!Schema::hasColumn('events', 'thumbnail')) {
+            if (! Schema::hasColumn('events', 'thumbnail')) {
                 $table->string('thumbnail')->nullable()->after('title');
             }
-            if (!Schema::hasColumn('events', 'slug')) {
+            if (! Schema::hasColumn('events', 'slug')) {
                 $table->string('slug')->nullable()->unique()->after('title');
             }
-            if (!Schema::hasColumn('events', 'category')) {
+            if (! Schema::hasColumn('events', 'category')) {
                 $table->string('category')->nullable()->after('description');
             }
         });

@@ -10,8 +10,9 @@ class Event extends Model
 {
     use HasFactory, SoftDeletes;
 
-    protected $fillable = ['title','slug','description','thumbnail','category','start_at','end_at','location','capacity','is_public'];
-    protected $casts = ['start_at'=>'datetime','end_at'=>'datetime','is_public'=>'boolean'];
+    protected $fillable = ['title', 'slug', 'description', 'thumbnail', 'category', 'start_at', 'end_at', 'location', 'capacity', 'is_public'];
+
+    protected $casts = ['start_at' => 'datetime', 'end_at' => 'datetime', 'is_public' => 'boolean'];
 
     protected static function booted(): void
     {
@@ -27,4 +28,3 @@ class Event extends Model
         return $this->hasMany(EventRegistration::class);
     }
 }
-

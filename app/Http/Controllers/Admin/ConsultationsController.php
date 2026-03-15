@@ -24,7 +24,7 @@ class ConsultationsController extends Controller
 
     public function edit(int $id)
     {
-        return view('admin.consultations.edit', ['id'=>$id]);
+        return view('admin.consultations.edit', ['id' => $id]);
     }
 
     public function update(Request $request, int $id)
@@ -37,4 +37,3 @@ class ConsultationsController extends Controller
         return redirect()->route('admin.consultations');
     }
 }
-

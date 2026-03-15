@@ -8,6 +8,6 @@ use Illuminate\Database\Eloquent\Model;
 class LetterTemplate extends Model
 {
     use HasFactory;
-    protected $fillable = ['name','code','numbering_pattern','reset_cycle'];
-}
 
+    protected $fillable = ['name', 'code', 'numbering_pattern', 'reset_cycle'];
+}

@@ -10,7 +10,8 @@ class Member extends Model
 {
     use HasFactory, SoftDeletes;
 
-    protected $fillable = ['user_id','category_id','name','membership_no','status','valid_until'];
+    protected $fillable = ['user_id', 'category_id', 'name', 'membership_no', 'status', 'valid_until'];
+
     protected $casts = ['valid_until' => 'date'];
 
     public function category()

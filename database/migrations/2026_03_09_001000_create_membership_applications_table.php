@@ -4,7 +4,8 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration {
+return new class extends Migration
+{
     public function up(): void
     {
         Schema::create('membership_applications', function (Blueprint $table) {
@@ -14,9 +15,9 @@ return new class extends Migration {
             $table->string('phone')->nullable();
             $table->string('organization')->nullable();
             $table->text('notes')->nullable();
-            $table->enum('status', ['submitted','reviewed','approved','rejected'])->default('submitted');
+            $table->enum('status', ['submitted', 'reviewed', 'approved', 'rejected'])->default('submitted');
             $table->timestamps();
-            $table->index(['email','status']);
+            $table->index(['email', 'status']);
         });
     }
 
@@ -25,4 +26,3 @@ return new class extends Migration {
         Schema::dropIfExists('membership_applications');
     }
 };
-

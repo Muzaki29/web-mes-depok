@@ -16,11 +16,11 @@
                         </div>
                         <div>
                             <select wire:model.live="category" class="w-full px-4 py-3 rounded-lg bg-white/90 text-gray-900 focus:outline-none focus:ring-2 focus:ring-emerald-500">
-                                <option value="All">Semua Kategori</option>
+                                <option value="Semua">Semua Kategori</option>
                                 <option value="Workshop">Workshop</option>
                                 <option value="Seminar">Seminar</option>
-                                <option value="Conference">Conference</option>
-                                <option value="Training">Training</option>
+                                <option value="Conference">Konferensi</option>
+                                <option value="Training">Pelatihan</option>
                             </select>
                         </div>
                         <div>

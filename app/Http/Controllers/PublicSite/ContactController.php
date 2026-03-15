@@ -12,6 +12,7 @@ class ContactController extends Controller
     public function create()
     {
         $captcha = CaptchaService::generate();
+
         return view('public.contact', compact('captcha'));
     }
 
@@ -19,7 +20,7 @@ class ContactController extends Controller
     {
         $validated = $request->validate([
             'captcha' => ['required', function ($attribute, $value, $fail) {
-                if (!CaptchaService::verify($value)) {
+                if (! CaptchaService::verify($value)) {
                     $fail('Kode keamanan salah. Silakan coba lagi.');
                 }
             }],

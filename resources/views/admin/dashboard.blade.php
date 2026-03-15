@@ -2,10 +2,10 @@
 
 @php
     $kpis = [
-        ['label' => 'Total Anggota', 'value' => $totalMembers ?? 0, 'icon' => '👥', 'color' => 'blue', 'desc' => 'Anggota terdaftar'],
-        ['label' => 'Agenda Mendatang', 'value' => $upcomingEvents ?? 0, 'icon' => '📅', 'color' => 'emerald', 'desc' => 'Dalam 30 hari'],
-        ['label' => 'Konsultasi Aktif', 'value' => $activeConsultations ?? 0, 'icon' => '💬', 'color' => 'purple', 'desc' => 'Perlu respon'],
-        ['label' => 'Dokumen', 'value' => $documentsCount ?? 0, 'icon' => '📂', 'color' => 'amber', 'desc' => 'Total arsip'],
+        ['key' => 'totalMembers', 'label' => 'Total Anggota', 'value' => $totalMembers ?? 0, 'icon' => '👥', 'color' => 'blue', 'desc' => 'Anggota terdaftar'],
+        ['key' => 'upcomingEvents', 'label' => 'Agenda Mendatang', 'value' => $upcomingEvents ?? 0, 'icon' => '📅', 'color' => 'emerald', 'desc' => 'Dalam 30 hari'],
+        ['key' => 'activeConsultations', 'label' => 'Konsultasi Aktif', 'value' => $activeConsultations ?? 0, 'icon' => '💬', 'color' => 'purple', 'desc' => 'Perlu respon'],
+        ['key' => 'documentsCount', 'label' => 'Dokumen', 'value' => $documentsCount ?? 0, 'icon' => '📂', 'color' => 'amber', 'desc' => 'Total arsip'],
     ];
 @endphp
 
@@ -14,7 +14,11 @@
     <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
         <div>
             <h1 class="text-3xl font-bold text-gray-900 tracking-tight">Dashboard Admin</h1>
-            <p class="text-gray-500 mt-1">Ringkasan aktivitas dan performa organisasi MES Depok.</p>
+            <p class="text-gray-500 mt-1">
+                Ringkasan aktivitas dan performa organisasi MES Depok.
+                <span class="mx-1 text-gray-300">•</span>
+                <span class="text-gray-600">Waktu: <span id="serverClock" class="font-medium">—</span></span>
+            </p>
         </div>
         <div class="flex items-center gap-3">
             <a href="{{ route('home') }}" target="_blank" class="inline-flex items-center px-4 py-2 bg-white border border-gray-300 rounded-xl font-medium text-gray-700 shadow-sm hover:bg-gray-50 transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500">
@@ -42,7 +46,7 @@
                             {{ $kpi['desc'] }}
                         </span>
                     </div>
-                    <h3 class="text-3xl font-bold text-gray-900 mb-1">{{ $kpi['value'] }}</h3>
+                    <h3 class="text-3xl font-bold text-gray-900 mb-1" id="kpi-{{ $kpi['key'] }}">{{ $kpi['value'] }}</h3>
                     <p class="text-sm text-gray-500 font-medium">{{ $kpi['label'] }}</p>
                 </div>
             </div>
@@ -69,8 +73,8 @@
                 <canvas id="eventParticipationChart"></canvas>
             </div>
             <div class="mt-4 text-center">
-                <p class="text-sm text-gray-500">Tingkat kehadiran rata-rata</p>
-                <p class="text-2xl font-bold text-gray-900">85%</p>
+                <p class="text-sm text-gray-500">Total pendaftar (3 agenda terakhir)</p>
+                <p class="text-2xl font-bold text-gray-900" id="eventTotalRegistrations">—</p>
             </div>
         </div>
     </div>
@@ -97,7 +101,7 @@
                     </a>
                     <a href="{{ route('admin.documents') }}" class="flex flex-col items-center justify-center p-4 bg-white/10 rounded-xl hover:bg-white/20 transition-colors backdrop-blur-sm cursor-pointer">
                         <svg class="w-6 h-6 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path></svg>
-                        <span class="text-sm font-medium">Upload Dokumen</span>
+                        <span class="text-sm font-medium">Unggah Dokumen</span>
                     </a>
                 </div>
             </div>
@@ -213,9 +217,61 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
 document.addEventListener('DOMContentLoaded', async () => {
+    const clockEl = document.getElementById('serverClock');
+    const kpiEls = {
+        totalMembers: document.getElementById('kpi-totalMembers'),
+        upcomingEvents: document.getElementById('kpi-upcomingEvents'),
+        activeConsultations: document.getElementById('kpi-activeConsultations'),
+        documentsCount: document.getElementById('kpi-documentsCount'),
+    };
+    const eventTotalRegistrationsEl = document.getElementById('eventTotalRegistrations');
+
+    const formatIdDateTime = (date) => {
+        return new Intl.DateTimeFormat('id-ID', {
+            weekday: 'short',
+            year: 'numeric',
+            month: 'short',
+            day: '2-digit',
+            hour: '2-digit',
+            minute: '2-digit',
+            second: '2-digit',
+        }).format(date);
+    };
+
+    let serverNow = null;
+    let clockTimer = null;
+
+    const startClock = (isoString) => {
+        const parsed = new Date(isoString);
+        if (Number.isNaN(parsed.getTime())) return;
+        serverNow = parsed;
+        if (clockTimer) clearInterval(clockTimer);
+        clockEl.textContent = formatIdDateTime(serverNow);
+        clockTimer = setInterval(() => {
+            serverNow = new Date(serverNow.getTime() + 1000);
+            clockEl.textContent = formatIdDateTime(serverNow);
+        }, 1000);
+    };
+
+    const refreshKpis = async () => {
+        const res = await fetch('{{ route('admin.dashboard.summary') }}', { headers: { 'Accept': 'application/json' } });
+        if (!res.ok) return;
+        const data = await res.json();
+
+        if (typeof data.totalMembers !== 'undefined' && kpiEls.totalMembers) kpiEls.totalMembers.textContent = data.totalMembers;
+        if (typeof data.upcomingEvents !== 'undefined' && kpiEls.upcomingEvents) kpiEls.upcomingEvents.textContent = data.upcomingEvents;
+        if (typeof data.activeConsultations !== 'undefined' && kpiEls.activeConsultations) kpiEls.activeConsultations.textContent = data.activeConsultations;
+        if (typeof data.documentsCount !== 'undefined' && kpiEls.documentsCount) kpiEls.documentsCount.textContent = data.documentsCount;
+        if (data.serverTime) startClock(data.serverTime);
+    };
+
     try {
         const mg = await fetch('/api/v1/charts/members-growth').then(r=>r.json());
         const ep = await fetch('/api/v1/charts/event-participation').then(r=>r.json());
+        if (eventTotalRegistrationsEl && Array.isArray(ep.data)) {
+            const total = ep.data.reduce((sum, n) => sum + (Number(n) || 0), 0);
+            eventTotalRegistrationsEl.textContent = total.toString();
+        }
         
         // Members Growth Chart
         new Chart(document.getElementById('membersGrowthChart'), {
@@ -290,6 +346,9 @@ document.addEventListener('DOMContentLoaded', async () => {
     } catch (e) {
         console.error('Error loading charts:', e);
     }
+
+    await refreshKpis();
+    setInterval(refreshKpis, 30000);
 });
 </script>
 @endpush

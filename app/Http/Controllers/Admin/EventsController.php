@@ -24,7 +24,7 @@ class EventsController extends Controller
 
     public function edit(int $id)
     {
-        return view('admin.events.edit', ['id'=>$id]);
+        return view('admin.events.edit', ['id' => $id]);
     }
 
     public function update(Request $request, int $id)
@@ -37,4 +37,3 @@ class EventsController extends Controller
         return redirect()->route('admin.events');
     }
 }
-

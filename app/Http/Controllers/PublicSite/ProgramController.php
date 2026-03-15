@@ -14,13 +14,14 @@ class ProgramController extends Controller
 
         if ($request->has('q')) {
             $search = $request->q;
-            $query->where(function($q) use ($search) {
+            $query->where(function ($q) use ($search) {
                 $q->where('title', 'like', "%{$search}%")
-                  ->orWhere('description', 'like', "%{$search}%");
+                    ->orWhere('description', 'like', "%{$search}%");
             });
         }
 
         $programs = $query->latest()->get();
+
         return view('public.programs', compact('programs'));
     }
 
@@ -28,6 +29,7 @@ class ProgramController extends Controller
     {
         $program = Program::where('slug', $slug)->where('status', 'active')->firstOrFail();
         $otherPrograms = Program::where('status', 'active')->where('id', '<>', $program->id)->limit(3)->get();
+
         return view('public.program', compact('program', 'otherPrograms'));
     }
 }

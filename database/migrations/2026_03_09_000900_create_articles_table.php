@@ -4,7 +4,8 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration {
+return new class extends Migration
+{
     public function up(): void
     {
         Schema::create('articles', function (Blueprint $table) {
@@ -13,11 +14,11 @@ return new class extends Migration {
             $table->string('title');
             $table->string('slug')->unique();
             $table->longText('body')->nullable();
-            $table->enum('status', ['draft','published'])->default('draft');
+            $table->enum('status', ['draft', 'published'])->default('draft');
             $table->timestamp('published_at')->nullable();
             $table->timestamps();
             $table->softDeletes();
-            $table->index(['status','published_at']);
+            $table->index(['status', 'published_at']);
         });
     }
 
@@ -26,4 +27,3 @@ return new class extends Migration {
         Schema::dropIfExists('articles');
     }
 };
-

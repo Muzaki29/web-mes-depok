@@ -8,18 +8,16 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::create('partners', function (Blueprint $table) {
+        Schema::create('site_settings', function (Blueprint $table) {
             $table->id();
-            $table->string('name')->unique();
-            $table->enum('type', ['ngo', 'company', 'gov', 'edu', 'other'])->default('company');
-            $table->string('website')->nullable();
+            $table->string('key')->unique();
+            $table->text('value')->nullable();
             $table->timestamps();
-            $table->softDeletes();
         });
     }
 
     public function down(): void
     {
-        Schema::dropIfExists('partners');
+        Schema::dropIfExists('site_settings');
     }
 };

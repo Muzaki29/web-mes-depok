@@ -1,29 +1,34 @@
 @extends('layouts.public')
 
 @section('hero')
+@php
+    $home = $homeSettings ?? [];
+    $heroBadge = $home['home.hero_badge'] ?? 'Masyarakat Ekonomi Syariah Kota Depok';
+    $heroTitle = $home['home.hero_title'] ?? "Membangun Ekonomi Umat,\nMensejahterakan Bangsa";
+    $heroSubtitle = $home['home.hero_subtitle'] ?? 'Wadah inklusif untuk mengembangkan ekonomi dan keuangan syariah yang berkeadilan, transparan, dan berkelanjutan di Kota Depok.';
+    $heroImage = $home['home.hero_image'] ?? 'https://images.unsplash.com/photo-1517048676732-d65bc937f952?q=80&w=2070&auto=format&fit=crop';
+    $ctaPrimaryLabel = $home['home.cta_primary_label'] ?? 'Tentang Kami';
+    $ctaPrimaryUrl = $home['home.cta_primary_url'] ?? '/about';
+    $ctaSecondaryLabel = $home['home.cta_secondary_label'] ?? 'Lihat Program';
+    $ctaSecondaryUrl = $home['home.cta_secondary_url'] ?? '/programs';
+@endphp
 <div class="relative bg-emerald-900 pt-32 pb-20 lg:pt-48 lg:pb-32 px-4 sm:px-6 lg:px-8 text-center text-white overflow-hidden">
     <div class="absolute inset-0">
-        <img src="https://images.unsplash.com/photo-1517048676732-d65bc937f952?q=80&w=2070&auto=format&fit=crop" alt="MES Depok Background" class="w-full h-full object-cover opacity-20">
+        <img src="{{ $heroImage }}" alt="MES Depok Background" class="w-full h-full object-cover opacity-20">
         <div class="absolute inset-0 bg-linear-to-t from-emerald-900 via-emerald-900/80 to-transparent"></div>
     </div>
     <div class="relative max-w-4xl mx-auto z-10">
         <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-emerald-800/50 backdrop-blur border border-emerald-700 text-emerald-100 text-sm mb-6 animate-fade-in-up">
             <span class="w-2 h-2 rounded-full bg-emerald-400"></span>
-            <span>Masyarakat Ekonomi Syariah Kota Depok</span>
+            <span>{{ $heroBadge }}</span>
         </div>
-        <h1 class="text-4xl md:text-6xl font-bold mb-6 leading-tight tracking-tight">
-            Membangun Ekonomi Umat,<br class="hidden md:block" /> Mensejahterakan Bangsa
-        </h1>
+        <h1 class="text-4xl md:text-6xl font-bold mb-6 leading-tight tracking-tight whitespace-pre-line">{{ $heroTitle }}</h1>
         <p class="text-xl text-emerald-100 leading-relaxed max-w-2xl mx-auto mb-10">
-            Wadah inklusif untuk mengembangkan ekonomi dan keuangan syariah yang berkeadilan, transparan, dan berkelanjutan di Kota Depok.
+            {{ $heroSubtitle }}
         </p>
         <div class="flex flex-col sm:flex-row items-center justify-center gap-4">
-            <a href="{{ url('/about') }}" class="w-full sm:w-auto px-8 py-4 bg-emerald-500 hover:bg-emerald-400 text-white rounded-xl font-semibold transition-all transform hover:-translate-y-1 shadow-lg shadow-emerald-900/20">
-                Tentang Kami
-            </a>
-            <a href="{{ url('/programs') }}" class="w-full sm:w-auto px-8 py-4 bg-white/10 hover:bg-white/20 backdrop-blur text-white border border-white/20 rounded-xl font-semibold transition-all">
-                Lihat Program
-            </a>
+            <a href="{{ url($ctaPrimaryUrl) }}" class="w-full sm:w-auto px-8 py-4 bg-emerald-500 hover:bg-emerald-400 text-white rounded-xl font-semibold transition-all transform hover:-translate-y-1 shadow-lg shadow-emerald-900/20">{{ $ctaPrimaryLabel }}</a>
+            <a href="{{ url($ctaSecondaryUrl) }}" class="w-full sm:w-auto px-8 py-4 bg-white/10 hover:bg-white/20 backdrop-blur text-white border border-white/20 rounded-xl font-semibold transition-all">{{ $ctaSecondaryLabel }}</a>
         </div>
     </div>
 </div>
@@ -69,21 +74,27 @@
 </div>
 
 <!-- Introduction Section -->
+@php
+    $introImage = $home['home.intro_image'] ?? 'https://images.unsplash.com/photo-1556761175-5973dc0f32e7?q=80&w=2064&auto=format&fit=crop';
+    $introTitle = $home['home.intro_title'] ?? 'Mendorong Pertumbuhan Ekonomi Syariah yang Inklusif';
+    $introBody = $home['home.intro_body'] ?? 'Masyarakat Ekonomi Syariah (MES) Depok hadir sebagai katalisator pengembangan ekonomi syariah di tingkat daerah. Kami berkomitmen untuk mensinergikan seluruh pemangku kepentingan demi terwujudnya sistem ekonomi yang adil dan mensejahterakan.';
+    $introQuote = $home['home.intro_quote'] ?? 'Sinergi untuk Ekonomi Syariah';
+@endphp
 <div class="mb-24">
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
         <div class="relative">
             <div class="absolute -left-4 -top-4 w-24 h-24 bg-emerald-100 rounded-full opacity-50 blur-xl"></div>
             <div class="relative rounded-2xl overflow-hidden shadow-2xl border border-gray-100">
-                <img src="https://images.unsplash.com/photo-1556761175-5973dc0f32e7?q=80&w=2064&auto=format&fit=crop" alt="Meeting" class="w-full h-auto">
+                <img src="{{ $introImage }}" alt="Meeting" class="w-full h-auto">
                 <div class="absolute inset-0 bg-linear-to-t from-black/60 to-transparent flex items-end p-8">
-                    <p class="text-white font-medium text-lg">"Sinergi untuk Ekonomi Syariah"</p>
+                    <p class="text-white font-medium text-lg">"{{ $introQuote }}"</p>
                 </div>
             </div>
         </div>
         <div>
-            <h2 class="text-3xl font-bold text-gray-900 mb-6">Mendorong Pertumbuhan Ekonomi Syariah yang Inklusif</h2>
+            <h2 class="text-3xl font-bold text-gray-900 mb-6">{{ $introTitle }}</h2>
             <p class="text-lg text-gray-600 mb-6 leading-relaxed">
-                Masyarakat Ekonomi Syariah (MES) Depok hadir sebagai katalisator pengembangan ekonomi syariah di tingkat daerah. Kami berkomitmen untuk mensinergikan seluruh pemangku kepentingan demi terwujudnya sistem ekonomi yang adil dan mensejahterakan.
+                {{ $introBody }}
             </p>
             <ul class="space-y-4 mb-8">
                 <li class="flex items-start">

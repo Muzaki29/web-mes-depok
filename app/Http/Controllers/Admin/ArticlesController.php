@@ -30,7 +30,8 @@ class ArticlesController extends Controller
         $data['slug'] = Str::slug($data['title']).'-'.Str::random(6);
         $data['author_id'] = auth()->id();
         Article::create($data);
-        return redirect()->route('admin.articles.index')->with('status','Article created');
+
+        return redirect()->route('admin.articles.index')->with('status', 'Artikel berhasil dibuat.');
     }
 
     public function edit(Article $article)
@@ -47,13 +48,14 @@ class ArticlesController extends Controller
             'published_at' => 'nullable|date',
         ]);
         $article->update($data);
-        return redirect()->route('admin.articles.index')->with('status','Article updated');
+
+        return redirect()->route('admin.articles.index')->with('status', 'Artikel berhasil diperbarui.');
     }
 
     public function destroy(Article $article)
     {
         $article->delete();
-        return back()->with('status','Article deleted');
+
+        return back()->with('status', 'Artikel berhasil dihapus.');
     }
 }
-

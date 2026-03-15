@@ -40,20 +40,27 @@
                                 <svg class="h-6 w-6 text-gray-600" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6 6 0 10-12 0v3.159c0 .538-.214 1.055-.595 1.436L4 17h5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
                                 <span class="absolute -top-0.5 -right-0.5 inline-flex h-4 w-4 items-center justify-center rounded-full bg-emerald-600 text-white text-[10px]">3</span>
                             </button>
-                            <div x-cloak x-show="open" @click.outside="open=false" class="absolute right-0 mt-2 w-72 bg-white rounded-lg shadow-lg ring-1 ring-black/5 overflow-hidden">
-                                <div class="px-4 py-3 border-b text-sm font-medium">Notifications</div>
+                            <div x-cloak x-show="open" @click.outside="open=false"
+                                 x-transition:enter="transition ease-out duration-150"
+                                 x-transition:enter-start="opacity-0 translate-y-1 scale-95"
+                                 x-transition:enter-end="opacity-100 translate-y-0 scale-100"
+                                 x-transition:leave="transition ease-in duration-100"
+                                 x-transition:leave-start="opacity-100 translate-y-0 scale-100"
+                                 x-transition:leave-end="opacity-0 translate-y-1 scale-95"
+                                 class="absolute right-0 mt-2 w-72 bg-white rounded-lg shadow-lg ring-1 ring-black/5 overflow-hidden">
+                                <div class="px-4 py-3 border-b text-sm font-medium">Notifikasi</div>
                                 <div class="divide-y">
                                     <div class="p-4 text-sm">
-                                        <p class="font-medium">Membership renewal reminder</p>
-                                        <p class="text-gray-500">Your membership expires in 30 days.</p>
+                                        <p class="font-medium">Pengingat perpanjangan keanggotaan</p>
+                                        <p class="text-gray-500">Masa berlaku keanggotaan Anda berakhir 30 hari lagi.</p>
                                     </div>
                                     <div class="p-4 text-sm">
-                                        <p class="font-medium">New event invitation</p>
-                                        <p class="text-gray-500">Member Networking Night</p>
+                                        <p class="font-medium">Undangan agenda baru</p>
+                                        <p class="text-gray-500">Malam Jejaring Anggota</p>
                                     </div>
                                     <div class="p-4 text-sm">
-                                        <p class="font-medium">Certificate available</p>
-                                        <p class="text-gray-500">Workshop certificate ready for download.</p>
+                                        <p class="font-medium">Sertifikat tersedia</p>
+                                        <p class="text-gray-500">Sertifikat pelatihan siap diunduh.</p>
                                     </div>
                                 </div>
                             </div>
@@ -64,19 +71,26 @@
                                 <span class="hidden sm:block text-sm font-medium">{{ Auth::user()->name ?? 'Guest' }}</span>
                                 <svg class="h-4 w-4 text-gray-500 sm:block hidden" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M19 9l-7 7-7-7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
                             </button>
-                            <div x-cloak x-show="open" @click.outside="open=false" class="absolute right-0 mt-2 w-56 bg-white rounded-lg shadow-lg ring-1 ring-black/5 overflow-hidden">
+                            <div x-cloak x-show="open" @click.outside="open=false"
+                                 x-transition:enter="transition ease-out duration-150"
+                                 x-transition:enter-start="opacity-0 translate-y-1 scale-95"
+                                 x-transition:enter-end="opacity-100 translate-y-0 scale-100"
+                                 x-transition:leave="transition ease-in duration-100"
+                                 x-transition:leave-start="opacity-100 translate-y-0 scale-100"
+                                 x-transition:leave-end="opacity-0 translate-y-1 scale-95"
+                                 class="absolute right-0 mt-2 w-56 bg-white rounded-lg shadow-lg ring-1 ring-black/5 overflow-hidden">
                                 @auth
-                                    <a href="{{ url('/member/dashboard') }}" class="block px-4 py-2 text-sm hover:bg-gray-50">Member Portal</a>
+                                    <a href="{{ url('/member/dashboard') }}" class="block px-4 py-2 text-sm hover:bg-gray-50">Portal Anggota</a>
                                     @if(auth()->user()->role === 'super_admin' || auth()->user()->role === 'org_admin')
-                                        <a href="{{ url('/admin/dashboard') }}" class="block px-4 py-2 text-sm hover:bg-gray-50">Admin Panel</a>
+                                        <a href="{{ url('/admin/dashboard') }}" class="block px-4 py-2 text-sm hover:bg-gray-50">Panel Admin</a>
                                     @endif
                                     <div class="border-t"></div>
                                     <form method="POST" action="{{ route('logout') }}">
                                         @csrf
-                                        <button type="submit" class="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-50">Sign out</button>
+                                        <button type="submit" class="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-50">Keluar</button>
                                     </form>
                                 @else
-                                    <a href="{{ route('login') }}" class="block px-4 py-2 text-sm hover:bg-gray-50">Sign in</a>
+                                    <a href="{{ route('login') }}" class="block px-4 py-2 text-sm hover:bg-gray-50">Masuk</a>
                                 @endauth
                             </div>
                         </div>
@@ -89,15 +103,116 @@
                 <aside x-data="{open:true}" @toggle-sidebar.window="open=!open" class="w-72 shrink-0 border-r border-gray-200 bg-white min-h-[calc(100vh-4rem)] hidden lg:block" :class="{'hidden lg:block':!open}">
                     <div class="p-4">
                         <nav class="space-y-1">
-                            <a href="{{ url('/admin/dashboard') }}" class="flex items-center gap-3 px-3 py-2 rounded-md hover:bg-emerald-50 hover:text-emerald-700 {{ request()->is('admin/dashboard') ? 'bg-emerald-50 text-emerald-700' : 'text-gray-700' }}">
-                                <span class="h-5 w-5 inline-block"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
-                                <span>Dashboard</span>
-                            </a>
-                            @php $items = ['members'=>'Members','programs'=>'Programs','events'=>'Events','letters'=>'Letters','announcements'=>'Announcements','articles'=>'Articles','applications'=>'Membership Applications','broadcast'=>'Broadcast','consultations'=>'Consultations','partners'=>'Partners','documents'=>'Documents','reports'=>'Reports','settings'=>'Settings']; @endphp
-                            @foreach($items as $key=>$label)
-                                <a href="{{ url('/admin/'.$key) }}" class="flex items-center gap-3 px-3 py-2 rounded-md hover:bg-gray-50 {{ request()->is('admin/'.$key.'*') ? 'bg-gray-100 text-gray-900' : 'text-gray-700' }}">
-                                    <span class="h-5 w-5 inline-block"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="9" stroke-width="2"/></svg></span>
-                                    <span>{{ $label }}</span>
+                            @php
+                                $navItems = [
+                                    'dashboard' => [
+                                        'label' => 'Dashboard',
+                                        'href' => url('/admin/dashboard'),
+                                        'active' => request()->is('admin/dashboard'),
+                                        'icon' => '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+                                    ],
+                                    'members' => [
+                                        'label' => 'Anggota',
+                                        'href' => url('/admin/members'),
+                                        'active' => request()->is('admin/members*'),
+                                        'icon' => '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M17 20h5v-1a4 4 0 00-4-4h-1" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M9 20H2v-1a4 4 0 014-4h3" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M16 11a4 4 0 10-8 0 4 4 0 008 0z" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M20 8a3 3 0 11-6 0 3 3 0 016 0z" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+                                    ],
+                                    'programs' => [
+                                        'label' => 'Program',
+                                        'href' => url('/admin/programs'),
+                                        'active' => request()->is('admin/programs*'),
+                                        'icon' => '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 2l1.5 4.5L18 8l-4.5 1.5L12 14l-1.5-4.5L6 8l4.5-1.5L12 2z" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M5 13l1 3 3 1-3 1-1 3-1-3-3-1 3-1 1-3z" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+                                    ],
+                                    'events' => [
+                                        'label' => 'Agenda',
+                                        'href' => url('/admin/events'),
+                                        'active' => request()->is('admin/events*'),
+                                        'icon' => '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M8 7V3m8 4V3M4 11h16M6 5h12a2 2 0 012 2v13a2 2 0 01-2 2H6a2 2 0 01-2-2V7a2 2 0 012-2z" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+                                    ],
+                                    'letters' => [
+                                        'label' => 'Surat',
+                                        'href' => url('/admin/letters'),
+                                        'active' => request()->is('admin/letters*'),
+                                        'icon' => '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M4 7a2 2 0 012-2h12a2 2 0 012 2v10a2 2 0 01-2 2H6a2 2 0 01-2-2V7z" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M4 8l8 5 8-5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+                                    ],
+                                    'announcements' => [
+                                        'label' => 'Pengumuman',
+                                        'href' => url('/admin/announcements'),
+                                        'active' => request()->is('admin/announcements*'),
+                                        'icon' => '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M11 5l10-3v16l-10-3" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M4 10v4a2 2 0 002 2h1l1 4h3l-1-4h1a4 4 0 000-8H6a2 2 0 00-2 2z" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+                                    ],
+                                    'articles' => [
+                                        'label' => 'Artikel',
+                                        'href' => url('/admin/articles'),
+                                        'active' => request()->is('admin/articles*'),
+                                        'icon' => '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M6 2h11a3 3 0 013 3v15a2 2 0 01-2 2H6a2 2 0 01-2-2V4a2 2 0 012-2z" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M8 6h8M8 10h8M8 14h6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+                                    ],
+                                    'applications' => [
+                                        'label' => 'Pendaftaran Anggota',
+                                        'href' => url('/admin/applications'),
+                                        'active' => request()->is('admin/applications*'),
+                                        'icon' => '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M9 3h6a2 2 0 012 2v2H7V5a2 2 0 012-2z" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M7 7h10v14a2 2 0 01-2 2H9a2 2 0 01-2-2V7z" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M9 13l2 2 4-4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+                                    ],
+                                    'broadcast' => [
+                                        'label' => 'Broadcast',
+                                        'href' => url('/admin/broadcast'),
+                                        'active' => request()->is('admin/broadcast*'),
+                                        'icon' => '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M4 11a8 8 0 0116 0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M7 11a5 5 0 0110 0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M12 14a2 2 0 00-2 2v4h4v-4a2 2 0 00-2-2z" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+                                    ],
+                                    'consultations' => [
+                                        'label' => 'Konsultasi',
+                                        'href' => url('/admin/consultations'),
+                                        'active' => request()->is('admin/consultations*'),
+                                        'icon' => '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M21 15a4 4 0 01-4 4H8l-5 3V7a4 4 0 014-4h10a4 4 0 014 4v8z" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M8 10h8M8 14h5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+                                    ],
+                                    'partners' => [
+                                        'label' => 'Mitra',
+                                        'href' => url('/admin/partners'),
+                                        'active' => request()->is('admin/partners*'),
+                                        'icon' => '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M7 12l3-3a4 4 0 015.657 0L17 10" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M2 12l5 5 3-3a2 2 0 012.828 0l1.172 1.172a2 2 0 002.828 0L22 10" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+                                    ],
+                                    'documents' => [
+                                        'label' => 'Dokumen',
+                                        'href' => url('/admin/documents'),
+                                        'active' => request()->is('admin/documents*'),
+                                        'icon' => '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M4 6a2 2 0 012-2h6l2 2h8a2 2 0 012 2v10a2 2 0 01-2 2H6a2 2 0 01-2-2V6z" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M4 10h20" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+                                    ],
+                                    'reports' => [
+                                        'label' => 'Laporan',
+                                        'href' => url('/admin/reports'),
+                                        'active' => request()->is('admin/reports*'),
+                                        'icon' => '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M4 19V5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M4 19h16" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M8 17v-6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M12 17V9" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M16 17v-3" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+                                    ],
+                                    'appearance' => [
+                                        'label' => 'Landing Page',
+                                        'href' => url('/admin/appearance/home'),
+                                        'active' => request()->is('admin/appearance*'),
+                                        'icon' => '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M4 4h16v16H4V4z" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M4 9h16" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M8 20V9" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M12 14h6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+                                    ],
+                                    'settings' => [
+                                        'label' => 'Pengaturan',
+                                        'href' => url('/admin/settings'),
+                                        'active' => request()->is('admin/settings*'),
+                                        'icon' => '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 15.5a3.5 3.5 0 110-7 3.5 3.5 0 010 7z" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M19.4 15a7.97 7.97 0 00.1-1 7.97 7.97 0 00-.1-1l2-1.5-2-3.5-2.4 1a8.36 8.36 0 00-1.7-1l-.4-2.6h-4l-.4 2.6a8.36 8.36 0 00-1.7 1l-2.4-1-2 3.5 2 1.5a7.97 7.97 0 00-.1 1c0 .34.03.67.1 1l-2 1.5 2 3.5 2.4-1a8.36 8.36 0 001.7 1l.4 2.6h4l.4-2.6a8.36 8.36 0 001.7-1l2.4 1 2-3.5-2-1.5z" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+                                    ],
+                                ];
+                            @endphp
+
+                            @foreach($navItems as $key => $item)
+                                @php
+                                    $active = (bool) ($item['active'] ?? false);
+                                    $linkClasses = $active
+                                        ? 'bg-emerald-50 text-emerald-800 ring-1 ring-emerald-100 shadow-sm'
+                                        : 'text-gray-700 hover:bg-gray-50 hover:text-gray-900';
+                                    $iconWrapClasses = $active
+                                        ? 'bg-emerald-600 text-white shadow'
+                                        : 'bg-gray-50 text-gray-600 group-hover:bg-white group-hover:text-gray-900';
+                                @endphp
+                                <a href="{{ $item['href'] }}" class="group flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200 ease-out hover:translate-x-0.5 focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500/40 {{ $linkClasses }}">
+                                    <span class="h-9 w-9 inline-flex items-center justify-center rounded-lg transition-all duration-200 ease-out group-hover:scale-[1.03] {{ $iconWrapClasses }}">
+                                        <span class="h-5 w-5 inline-block">{!! $item['icon'] !!}</span>
+                                    </span>
+                                    <span class="font-medium">{{ $item['label'] }}</span>
                                 </a>
                             @endforeach
                         </nav>
@@ -118,47 +233,48 @@
                             <span class="inline-flex h-9 w-9 items-center justify-center rounded-md bg-emerald-600 text-white font-semibold">EC</span>
                             <span class="font-semibold text-lg text-white">EconoComm</span>
                         </div>
-                        <p class="mt-3 text-sm text-gray-400">Building sustainable economic communities through ethical practices and collaborative growth.</p>
+                        <p class="mt-3 text-sm text-gray-400">Membangun komunitas ekonomi yang berkelanjutan melalui praktik etis dan pertumbuhan kolaboratif.</p>
                     </div>
                     <div>
-                        <p class="text-sm font-semibold text-white">Quick Links</p>
+                        <p class="text-sm font-semibold text-white">Tautan Cepat</p>
                         <ul class="mt-3 space-y-2 text-sm">
-                            <li><a class="hover:text-white" href="{{ url('/about') }}">About Us</a></li>
-                            <li><a class="hover:text-white" href="{{ route('member.dashboard') }}">Membership</a></li>
-                            <li><a class="hover:text-white" href="{{ url('/events') }}">Events</a></li>
-                            <li><a class="hover:text-white" href="{{ url('/news') }}">News</a></li>
+                            <li><a class="hover:text-white" href="{{ url('/about') }}">Tentang Kami</a></li>
+                            <li><a class="hover:text-white" href="{{ route('member.dashboard') }}">Keanggotaan</a></li>
+                            <li><a class="hover:text-white" href="{{ url('/events') }}">Agenda</a></li>
+                            <li><a class="hover:text-white" href="{{ url('/news') }}">Berita</a></li>
                         </ul>
                     </div>
                     <div>
-                        <p class="text-sm font-semibold text-white">Services</p>
+                        <p class="text-sm font-semibold text-white">Layanan</p>
                         <ul class="mt-3 space-y-2 text-sm">
-                            <li><a class="hover:text-white" href="#">Consultation</a></li>
-                            <li><a class="hover:text-white" href="#">Certification</a></li>
-                            <li><a class="hover:text-white" href="#">Training</a></li>
-                            <li><a class="hover:text-white" href="#">Resources</a></li>
+                            <li><a class="hover:text-white" href="#">Konsultasi</a></li>
+                            <li><a class="hover:text-white" href="#">Sertifikasi</a></li>
+                            <li><a class="hover:text-white" href="#">Pelatihan</a></li>
+                            <li><a class="hover:text-white" href="#">Sumber Daya</a></li>
                         </ul>
                     </div>
                     <div>
-                        <p class="text-sm font-semibold text-white">Contact</p>
+                        <p class="text-sm font-semibold text-white">Kontak</p>
                         <ul class="mt-3 space-y-2 text-sm">
-                            <li><a class="hover:text-white" href="mailto:contact@econocomm.org">contact@econocomm.org</a></li>
-                            <li><span>+1 (555) 123–4567</span></li>
-                            <li><span>123 Business District</span></li>
-                            <li><span>Economic City, EC 12345</span></li>
+                            <li><a class="hover:text-white" href="mailto:info@mesdepok.org">info@mesdepok.org</a></li>
+                            <li><span>+62 812-0000-0000</span></li>
+                            <li><span>Kota Depok</span></li>
+                            <li><span>Jawa Barat, Indonesia</span></li>
                         </ul>
                     </div>
                 </div>
                 <div class="mt-8 border-t border-gray-800 pt-6 flex items-center justify-between text-sm">
-                    <p class="text-gray-400">© {{ date('Y') }} EconoComm. All rights reserved.</p>
+                    <p class="text-gray-400">© {{ date('Y') }} EconoComm. Hak cipta dilindungi.</p>
                     <div class="flex items-center gap-6">
-                        <a href="#" class="hover:text-white">Privacy Policy</a>
-                        <a href="#" class="hover:text-white">Terms of Service</a>
+                        <a href="#" class="hover:text-white">Kebijakan Privasi</a>
+                        <a href="#" class="hover:text-white">Syarat & Ketentuan</a>
                     </div>
                 </div>
             </div>
         </footer>
     </div>
     @livewireScripts
+    @stack('scripts')
 </body>
 </html>
 

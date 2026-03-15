@@ -9,11 +9,17 @@ use Livewire\Component;
 class AnnouncementsManager extends Component
 {
     public string $search = '';
+
     public int $perPage = 10;
+
     public bool $showCreate = false;
+
     public bool $showEdit = false;
+
     public bool $showDelete = false;
+
     public ?int $editingId = null;
+
     public array $form = [
         'title' => '',
         'body' => '',
@@ -24,14 +30,14 @@ class AnnouncementsManager extends Component
     public function paginator(): LengthAwarePaginator
     {
         return Announcement::query()
-            ->when($this->search !== '', fn ($q) => $q->where('title','like','%'.$this->search.'%'))
+            ->when($this->search !== '', fn ($q) => $q->where('title', 'like', '%'.$this->search.'%'))
             ->orderByDesc('id')
             ->paginate($this->perPage, ['*'], 'page', request()->input('page', 1));
     }
 
     public function create(): void
     {
-        $this->form = ['title'=>'','body'=>'','status'=>'draft','published_at'=>''];
+        $this->form = ['title' => '', 'body' => '', 'status' => 'draft', 'published_at' => ''];
         $this->showCreate = true;
     }
 
@@ -86,6 +92,6 @@ class AnnouncementsManager extends Component
 
     public function render()
     {
-        return view('livewire.announcements-manager', ['paginator'=>$this->paginator()]);
+        return view('livewire.announcements-manager', ['paginator' => $this->paginator()]);
     }
 }

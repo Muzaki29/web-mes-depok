@@ -45,13 +45,14 @@ class LetterNumberingService
     {
         $formatted = $pattern;
         $formatted = preg_replace_callback('/\\{SEQ(?::(\\d+))?\\}/', function ($m) use ($vars) {
-            $width = isset($m[1]) ? (int)$m[1] : 3;
-            return str_pad((string)$vars['SEQ'], $width, '0', STR_PAD_LEFT);
+            $width = isset($m[1]) ? (int) $m[1] : 3;
+
+            return str_pad((string) $vars['SEQ'], $width, '0', STR_PAD_LEFT);
         }, $formatted);
         foreach ($vars as $k => $v) {
-            $formatted = str_replace('{'.$k.'}', (string)$v, $formatted);
+            $formatted = str_replace('{'.$k.'}', (string) $v, $formatted);
         }
+
         return Str::upper($formatted);
     }
 }
-

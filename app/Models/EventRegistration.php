@@ -9,11 +9,10 @@ class EventRegistration extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['event_id','member_id','name','email','token','status'];
+    protected $fillable = ['event_id', 'member_id', 'name', 'email', 'token', 'status'];
 
     public function event()
     {
         return $this->belongsTo(Event::class);
     }
 }
-

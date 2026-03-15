@@ -4,7 +4,8 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration {
+return new class extends Migration
+{
     public function up(): void
     {
         Schema::create('member_categories', function (Blueprint $table) {
@@ -21,11 +22,11 @@ return new class extends Migration {
             $table->foreignId('category_id')->nullable()->constrained('member_categories')->nullOnDelete();
             $table->string('name');
             $table->string('membership_no')->unique();
-            $table->enum('status', ['active','pending','expired','rejected'])->default('active');
+            $table->enum('status', ['active', 'pending', 'expired', 'rejected'])->default('active');
             $table->date('valid_until')->nullable();
             $table->timestamps();
             $table->softDeletes();
-            $table->index(['status','valid_until']);
+            $table->index(['status', 'valid_until']);
         });
     }
 
@@ -35,4 +36,3 @@ return new class extends Migration {
         Schema::dropIfExists('member_categories');
     }
 };
-

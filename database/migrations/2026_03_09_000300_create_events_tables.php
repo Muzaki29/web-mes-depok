@@ -4,7 +4,8 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration {
+return new class extends Migration
+{
     public function up(): void
     {
         Schema::create('events', function (Blueprint $table) {
@@ -28,9 +29,9 @@ return new class extends Migration {
             $table->string('name');
             $table->string('email')->nullable();
             $table->string('token')->unique(); // for QR check-in
-            $table->enum('status', ['registered','confirmed','cancelled','attended','no_show'])->default('registered');
+            $table->enum('status', ['registered', 'confirmed', 'cancelled', 'attended', 'no_show'])->default('registered');
             $table->timestamps();
-            $table->unique(['event_id','member_id']);
+            $table->unique(['event_id', 'member_id']);
         });
 
         Schema::create('attendances', function (Blueprint $table) {
@@ -39,7 +40,7 @@ return new class extends Migration {
             $table->foreignId('registration_id')->constrained('event_registrations')->cascadeOnDelete();
             $table->dateTime('checked_in_at')->nullable();
             $table->timestamps();
-            $table->unique(['event_id','registration_id']);
+            $table->unique(['event_id', 'registration_id']);
         });
     }
 
@@ -50,4 +51,3 @@ return new class extends Migration {
         Schema::dropIfExists('events');
     }
 };
-

@@ -5,14 +5,15 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Program;
 use Illuminate\Http\Request;
-use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 
 class ProgramController extends Controller
 {
     public function index()
     {
         $programs = Program::latest()->paginate(10);
+
         return view('admin.programs.index', compact('programs'));
     }
 
@@ -77,6 +78,7 @@ class ProgramController extends Controller
             Storage::disk('public')->delete($program->thumbnail);
         }
         $program->delete();
+
         return redirect()->route('admin.programs.index')->with('success', 'Program berhasil dihapus');
     }
 }

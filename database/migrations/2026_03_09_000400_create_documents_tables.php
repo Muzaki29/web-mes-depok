@@ -4,7 +4,8 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration {
+return new class extends Migration
+{
     public function up(): void
     {
         Schema::create('document_categories', function (Blueprint $table) {
@@ -18,14 +19,14 @@ return new class extends Migration {
             $table->string('title');
             $table->string('slug')->unique();
             $table->foreignId('category_id')->nullable()->constrained('document_categories')->nullOnDelete();
-            $table->enum('visibility', ['public','member','role','private'])->default('public');
+            $table->enum('visibility', ['public', 'member', 'role', 'private'])->default('public');
             $table->string('role')->nullable(); // for role-restricted documents
             $table->string('path');
             $table->string('mime')->nullable();
             $table->unsignedBigInteger('size')->nullable();
             $table->timestamps();
             $table->softDeletes();
-            $table->index(['visibility','category_id']);
+            $table->index(['visibility', 'category_id']);
         });
     }
 
@@ -35,4 +36,3 @@ return new class extends Migration {
         Schema::dropIfExists('document_categories');
     }
 };
-

@@ -4,7 +4,7 @@
 <div class="max-w-4xl mx-auto">
     <div class="flex items-center justify-between mb-8">
         <div>
-            <h1 class="text-2xl font-bold text-gray-900">Edit Program</h1>
+            <h1 class="text-2xl font-bold text-gray-900">Ubah Program</h1>
             <p class="text-sm text-gray-500 mt-1">Perbarui informasi program.</p>
         </div>
         <a href="{{ route('admin.programs.index') }}" class="inline-flex items-center px-4 py-2 bg-white border border-gray-300 rounded-xl font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 transition-colors">
@@ -59,7 +59,7 @@
                 <label class="block text-sm font-medium text-gray-700 mb-1">Thumbnail Program</label>
                 @if($program->thumbnail)
                     <div class="mb-4">
-                        <img src="{{ str_starts_with($program->thumbnail, 'http') ? $program->thumbnail : asset('storage/'.$program->thumbnail) }}" alt="Current Thumbnail" class="h-32 w-auto object-cover rounded-lg border border-gray-200">
+                        <img src="{{ str_starts_with($program->thumbnail, 'http') ? $program->thumbnail : asset('storage/'.$program->thumbnail) }}" alt="Thumbnail saat ini" class="h-32 w-auto object-cover rounded-lg border border-gray-200">
                         <p class="text-xs text-gray-500 mt-1">Thumbnail saat ini</p>
                     </div>
                 @endif
@@ -73,9 +73,9 @@
                                 <span>Ganti file</span>
                                 <input id="thumbnail" name="thumbnail" type="file" class="sr-only">
                             </label>
-                            <p class="pl-1">atau drag and drop</p>
+                            <p class="pl-1">atau tarik dan lepas</p>
                         </div>
-                        <p class="text-xs text-gray-500">PNG, JPG, GIF up to 2MB</p>
+                        <p class="text-xs text-gray-500">PNG, JPG, GIF maksimal 2MB</p>
                     </div>
                 </div>
                 @error('thumbnail')

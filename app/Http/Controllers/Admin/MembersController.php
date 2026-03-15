@@ -24,7 +24,7 @@ class MembersController extends Controller
 
     public function edit(int $id)
     {
-        return view('admin.members.edit', ['id'=>$id]);
+        return view('admin.members.edit', ['id' => $id]);
     }
 
     public function update(Request $request, int $id)
@@ -37,4 +37,3 @@ class MembersController extends Controller
         return redirect()->route('admin.members');
     }
 }
-

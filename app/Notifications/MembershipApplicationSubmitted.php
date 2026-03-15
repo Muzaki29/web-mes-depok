@@ -21,6 +21,7 @@ class MembershipApplicationSubmitted extends Notification
     public function toMail(object $notifiable): MailMessage
     {
         $a = $this->application;
+
         return (new MailMessage)
             ->subject('New Membership Application')
             ->greeting('Assalamu’alaikum, Admin')
@@ -34,4 +35,3 @@ class MembershipApplicationSubmitted extends Notification
             ->line('Please review this application in the admin dashboard.');
     }
 }
-

@@ -8,7 +8,8 @@ use Illuminate\Database\Eloquent\Model;
 class Attendance extends Model
 {
     use HasFactory;
-    protected $fillable = ['event_id','registration_id','checked_in_at'];
+
+    protected $fillable = ['event_id', 'registration_id', 'checked_in_at'];
+
     protected $casts = ['checked_in_at' => 'datetime'];
 }
-

@@ -11,7 +11,7 @@ class Document extends Model
 {
     use HasFactory, SoftDeletes;
 
-    protected $fillable = ['title','slug','category_id','visibility','role','path','mime','size'];
+    protected $fillable = ['title', 'slug', 'category_id', 'visibility', 'role', 'path', 'mime', 'size'];
 
     public function category()
     {
@@ -27,4 +27,3 @@ class Document extends Model
         });
     }
 }
-

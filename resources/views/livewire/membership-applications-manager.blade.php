@@ -1,13 +1,13 @@
 <div>
     <div class="flex items-center justify-between mb-4">
         <div class="flex items-center gap-2">
-            <input type="text" wire:model.live="search" placeholder="Cari..." class="px-3 py-2 rounded-md border border-gray-300">
+            <input type="text" wire:model.live="search" placeholder="Cari pengajuan..." class="px-3 py-2 rounded-md border border-gray-300">
             <select wire:model.live="status" class="px-2 py-2 rounded-md border border-gray-300">
                 <option value="all">Semua</option>
-                <option value="submitted">Submitted</option>
-                <option value="reviewed">Reviewed</option>
-                <option value="approved">Approved</option>
-                <option value="rejected">Rejected</option>
+                <option value="submitted">Diajukan</option>
+                <option value="reviewed">Ditinjau</option>
+                <option value="approved">Disetujui</option>
+                <option value="rejected">Ditolak</option>
             </select>
             <select wire:model.live="perPage" class="px-2 py-2 rounded-md border border-gray-300"><option>10</option><option>20</option><option>50</option></select>
         </div>
@@ -27,7 +27,18 @@
             <td class="px-4 py-3">{{ $m->name }}</td>
             <td class="px-4 py-3">{{ $m->email }}</td>
             <td class="px-4 py-3">{{ $m->organization ?: '—' }}</td>
-            <td class="px-4 py-3"><span class="inline-flex px-2 py-1 rounded-full text-xs bg-gray-100 text-gray-700">{{ ucfirst($m->status) }}</span></td>
+            <td class="px-4 py-3">
+                @php
+                    $statusLabel = match ($m->status) {
+                        'submitted' => 'Diajukan',
+                        'reviewed' => 'Ditinjau',
+                        'approved' => 'Disetujui',
+                        'rejected' => 'Ditolak',
+                        default => ucfirst($m->status),
+                    };
+                @endphp
+                <span class="inline-flex px-2 py-1 rounded-full text-xs bg-gray-100 text-gray-700">{{ $statusLabel }}</span>
+            </td>
             <td class="px-4 py-3 text-right">
                 <x-button size="sm" variant="secondary" wire:click="review({{ $m->id }})">Tinjau</x-button>
             </td>
@@ -47,4 +58,3 @@
         </x-slot:footer>
     </x-modal>
 </div>
-

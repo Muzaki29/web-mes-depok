@@ -8,6 +8,6 @@ use Illuminate\Database\Eloquent\Model;
 class LetterCounter extends Model
 {
     use HasFactory;
-    protected $fillable = ['template_id','period','current_seq'];
-}
 
+    protected $fillable = ['template_id', 'period', 'current_seq'];
+}

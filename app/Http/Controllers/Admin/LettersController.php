@@ -24,7 +24,7 @@ class LettersController extends Controller
 
     public function edit(int $id)
     {
-        return view('admin.letters.edit', ['id'=>$id]);
+        return view('admin.letters.edit', ['id' => $id]);
     }
 
     public function update(Request $request, int $id)
@@ -37,4 +37,3 @@ class LettersController extends Controller
         return redirect()->route('admin.letters');
     }
 }
-

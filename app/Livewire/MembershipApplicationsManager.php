@@ -4,26 +4,31 @@ namespace App\Livewire;
 
 use App\Models\Member;
 use App\Models\MembershipApplication;
-use Illuminate\Pagination\LengthAwarePaginator;
-use Livewire\Component;
-use Illuminate\Support\Str;
-use Illuminate\Support\Facades\Notification;
 use App\Notifications\MembershipApplicationStatusChanged;
+use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Facades\Notification;
+use Illuminate\Support\Str;
+use Livewire\Component;
 
 class MembershipApplicationsManager extends Component
 {
     public string $search = '';
+
     public string $status = 'all';
+
     public int $perPage = 10;
+
     public bool $showReview = false;
+
     public ?int $reviewId = null;
+
     public array $form = ['notes' => ''];
 
     public function paginator(): LengthAwarePaginator
     {
         return MembershipApplication::query()
-            ->when($this->status !== 'all', fn($q) => $q->where('status', $this->status))
-            ->when($this->search !== '', fn($q) => $q->where('name','like','%'.$this->search.'%')->orWhere('email','like','%'.$this->search.'%'))
+            ->when($this->status !== 'all', fn ($q) => $q->where('status', $this->status))
+            ->when($this->search !== '', fn ($q) => $q->where('name', 'like', '%'.$this->search.'%')->orWhere('email', 'like', '%'.$this->search.'%'))
             ->orderByDesc('id')
             ->paginate($this->perPage, ['*'], 'page', request()->input('page', 1));
     }

@@ -8,6 +8,6 @@ use Illuminate\Database\Eloquent\Model;
 class MembershipApplication extends Model
 {
     use HasFactory;
-    protected $fillable = ['name','email','phone','organization','notes','status'];
-}
 
+    protected $fillable = ['name', 'email', 'phone', 'organization', 'notes', 'status'];
+}

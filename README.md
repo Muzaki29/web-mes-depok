@@ -4,6 +4,13 @@
 
 Repositori resmi untuk website Masyarakat Ekonomi Syariah (MES) Kota Depok. Website ini berfungsi sebagai pusat informasi program kerja, pendaftaran anggota, berita terkini, dan manajemen organisasi.
 
+## 🗓️ Update Terakhir
+
+**2026-03-16**
+- Lokalisasi admin ke Bahasa Indonesia (label, tombol, notifikasi).
+- Perapihan responsivitas tabel/form admin untuk tampilan mobile.
+- Ekspor data Konsultasi ke CSV (menu Konsultasi & Laporan).
+
 ## 🚀 Fitur Utama
 
 - **Halaman Publik**: Beranda modern, Profil Organisasi, Berita & Artikel, Agenda Kegiatan, Program Kerja.

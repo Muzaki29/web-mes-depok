@@ -14,6 +14,7 @@ class MembershipController extends Controller
     public function create()
     {
         $captcha = CaptchaService::generate();
+
         return view('public.membership', compact('captcha'));
     }
 
@@ -21,7 +22,7 @@ class MembershipController extends Controller
     {
         $data = $request->validate([
             'captcha' => ['required', function ($attribute, $value, $fail) {
-                if (!CaptchaService::verify($value)) {
+                if (! CaptchaService::verify($value)) {
                     $fail('Kode keamanan salah. Silakan coba lagi.');
                 }
             }],
@@ -39,10 +40,9 @@ class MembershipController extends Controller
                 ->notify(new MembershipApplicationSubmitted($app));
         } catch (\Exception $e) {
             // Log error but continue to show success message to user
-            \Illuminate\Support\Facades\Log::error('Failed to send membership notification: ' . $e->getMessage());
+            \Illuminate\Support\Facades\Log::error('Failed to send membership notification: '.$e->getMessage());
         }
 
-        return redirect()->route('membership')->with('status','Pendaftaran berhasil dikirim. Kami akan menghubungi Anda.');
+        return redirect()->route('membership')->with('status', 'Pendaftaran berhasil dikirim. Kami akan menghubungi Anda.');
     }
 }
-

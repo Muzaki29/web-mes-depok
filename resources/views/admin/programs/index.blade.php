@@ -54,15 +54,22 @@
                         </span>
                     </td>
                     <td class="px-6 py-4">
+                        @php
+                            $statusLabel = match ($program->status) {
+                                'active' => 'Aktif',
+                                'inactive' => 'Tidak Aktif',
+                                default => ucfirst($program->status),
+                            };
+                        @endphp
                         <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium {{ $program->status === 'active' ? 'bg-emerald-100 text-emerald-800' : 'bg-gray-100 text-gray-800' }}">
-                            {{ ucfirst($program->status) }}
+                            {{ $statusLabel }}
                         </span>
                     </td>
                     <td class="px-6 py-4">
                         {{ $program->created_at->format('d M Y') }}
                     </td>
                     <td class="px-6 py-4 text-right space-x-2">
-                        <a href="{{ route('admin.programs.edit', $program) }}" class="font-medium text-emerald-600 hover:underline">Edit</a>
+                        <a href="{{ route('admin.programs.edit', $program) }}" class="font-medium text-emerald-600 hover:underline">Ubah</a>
                         <form action="{{ route('admin.programs.destroy', $program) }}" method="POST" class="inline-block" onsubmit="return confirm('Apakah Anda yakin ingin menghapus program ini?');">
                             @csrf
                             @method('DELETE')
