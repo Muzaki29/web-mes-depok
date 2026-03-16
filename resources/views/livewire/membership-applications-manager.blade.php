@@ -47,7 +47,7 @@
     </x-table>
     <div class="mt-4">{{ $paginator->links() }}</div>
 
-    <x-modal :show="$showReview" maxWidth="md">
+    <x-modal wire:model="showReview" maxWidth="md">
         <x-slot:title>Tinjau Aplikasi</x-slot:title>
         <p>Setujui atau tolak aplikasi keanggotaan ini. Persetujuan akan otomatis membuat data Member.</p>
         <x-slot:footer>

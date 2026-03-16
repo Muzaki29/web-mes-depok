@@ -39,6 +39,14 @@ class MembersTable extends Component
         'valid_until' => '',
     ];
 
+    private function closeModals(): void
+    {
+        $this->showCreate = false;
+        $this->showEdit = false;
+        $this->showDelete = false;
+        $this->showBulkDelete = false;
+    }
+
     public function updatedSearch()
     {
         $this->resetPage();
@@ -56,6 +64,9 @@ class MembersTable extends Component
     public function updatedSelected()
     {
         $this->selectAll = false;
+        if (count($this->selected) === 0) {
+            $this->showBulkDelete = false;
+        }
     }
 
     public function getQuery()
@@ -82,6 +93,7 @@ class MembersTable extends Component
 
     public function create(): void
     {
+        $this->closeModals();
         $this->form = [
             'name' => '',
             'membership_no' => 'EC-'.date('Y').'-'.rand(1000, 9999),
@@ -94,6 +106,9 @@ class MembersTable extends Component
 
     public function store(): void
     {
+        if (($this->form['valid_until'] ?? null) === '') {
+            $this->form['valid_until'] = null;
+        }
         $data = $this->validate([
             'form.name' => 'required|string|max:255',
             'form.membership_no' => 'required|string|max:255|unique:members,membership_no',
@@ -115,6 +130,7 @@ class MembersTable extends Component
 
     public function edit(int $id): void
     {
+        $this->closeModals();
         $this->editingId = $id;
         $member = Member::find($id);
         if ($member) {
@@ -131,6 +147,9 @@ class MembersTable extends Component
 
     public function update(): void
     {
+        if (($this->form['valid_until'] ?? null) === '') {
+            $this->form['valid_until'] = null;
+        }
         $data = $this->validate([
             'form.name' => 'required|string|max:255',
             'form.membership_no' => 'required|string|max:255|unique:members,membership_no,'.$this->editingId,
@@ -152,6 +171,7 @@ class MembersTable extends Component
 
     public function confirmDelete(int $id): void
     {
+        $this->closeModals();
         $this->editingId = $id;
         $this->showDelete = true;
     }
@@ -165,9 +185,8 @@ class MembersTable extends Component
 
     public function confirmBulkDelete(): void
     {
-        if (count($this->selected) > 0) {
-            $this->showBulkDelete = true;
-        }
+        $this->closeModals();
+        $this->showBulkDelete = count($this->selected) > 0;
     }
 
     public function destroySelected(): void

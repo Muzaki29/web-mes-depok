@@ -173,6 +173,67 @@ Route::prefix('admin')->middleware(['auth', 'role:super_admin,org_admin'])->grou
             'Content-Type' => 'text/csv; charset=UTF-8',
         ]);
     })->name('admin.consultations.export_csv');
+    Route::get('/events/export-csv', function () {
+        $fileName = 'agenda-'.now()->format('Y-m-d').'.csv';
+
+        return response()->streamDownload(function () {
+            $out = fopen('php://output', 'w');
+            fputcsv($out, ['ID', 'Judul', 'Kategori', 'Mulai', 'Selesai', 'Lokasi', 'Kuota', 'Publik', 'Dibuat']);
+
+            Event::query()
+                ->orderByDesc('start_at')
+                ->chunk(500, function ($rows) use ($out) {
+                    foreach ($rows as $e) {
+                        fputcsv($out, [
+                            $e->id,
+                            $e->title,
+                            $e->category,
+                            optional($e->start_at)->format('Y-m-d H:i'),
+                            optional($e->end_at)->format('Y-m-d H:i'),
+                            $e->location,
+                            $e->capacity,
+                            $e->is_public ? 'Ya' : 'Tidak',
+                            optional($e->created_at)->format('Y-m-d H:i'),
+                        ]);
+                    }
+                });
+
+            fclose($out);
+        }, $fileName, [
+            'Content-Type' => 'text/csv; charset=UTF-8',
+        ]);
+    })->name('admin.events.export_csv');
+    Route::get('/documents/export-csv', function () {
+        $fileName = 'dokumen-'.now()->format('Y-m-d').'.csv';
+
+        return response()->streamDownload(function () {
+            $out = fopen('php://output', 'w');
+            fputcsv($out, ['ID', 'Judul', 'Kategori', 'Visibilitas', 'Role', 'Path', 'Mime', 'Ukuran (bytes)', 'Dibuat']);
+
+            Document::query()
+                ->with('category')
+                ->orderByDesc('id')
+                ->chunk(500, function ($rows) use ($out) {
+                    foreach ($rows as $d) {
+                        fputcsv($out, [
+                            $d->id,
+                            $d->title,
+                            optional($d->category)->name,
+                            $d->visibility,
+                            $d->role,
+                            $d->path,
+                            $d->mime,
+                            $d->size,
+                            optional($d->created_at)->format('Y-m-d H:i'),
+                        ]);
+                    }
+                });
+
+            fclose($out);
+        }, $fileName, [
+            'Content-Type' => 'text/csv; charset=UTF-8',
+        ]);
+    })->name('admin.documents.export_csv');
     Route::view('/events', 'admin.events.index')->name('admin.events');
     Route::view('/letters', 'admin.letters.index')->name('admin.letters');
     Route::view('/announcements', 'admin.announcements.index')->name('admin.announcements');
@@ -183,6 +244,7 @@ Route::prefix('admin')->middleware(['auth', 'role:super_admin,org_admin'])->grou
     Route::view('/partners', 'admin.partners.index')->name('admin.partners');
     Route::view('/documents', 'admin.documents.index')->name('admin.documents');
     Route::view('/reports', 'admin.reports.index')->name('admin.reports');
+    Route::view('/notifications', 'admin.notifications.index')->name('admin.notifications');
     Route::view('/settings', 'admin.settings.index')->name('admin.settings');
     Route::post('/settings', function (Request $request) {
         $validated = $request->validate([
@@ -270,9 +332,40 @@ Route::prefix('admin')->middleware(['auth', 'role:super_admin,org_admin'])->grou
     Route::resource('programs', App\Http\Controllers\Admin\ProgramController::class)->names('admin.programs');
 });
 
-Route::prefix('member')->middleware('role:member,super_admin,org_admin')->group(function () {
+Route::prefix('member')->middleware(['auth', 'role:member,super_admin,org_admin'])->group(function () {
     Route::view('/dashboard', 'member.dashboard')->name('member.dashboard');
     Route::view('/card', 'member.card')->name('member.card');
+    Route::get('/profile', function () {
+        $user = auth()->user();
+        $member = Member::query()->with('category')->where('user_id', $user->id)->first();
+
+        return view('member.profile', compact('user', 'member'));
+    })->name('member.profile');
+    Route::post('/profile', function (Request $request) {
+        $user = $request->user();
+        $validated = $request->validate([
+            'name' => ['required', 'string', 'max:255'],
+            'email' => ['required', 'email', 'max:255', 'unique:users,email,'.$user->id],
+            'password' => ['nullable', 'string', 'min:8', 'confirmed'],
+        ]);
+
+        $user->name = $validated['name'];
+        $user->email = $validated['email'];
+        if (($validated['password'] ?? '') !== '') {
+            $user->password = $validated['password'];
+        }
+        $user->save();
+
+        Member::query()
+            ->where('user_id', $user->id)
+            ->update(['name' => $validated['name']]);
+
+        return redirect()->route('member.profile')->with('status', 'Profil berhasil disimpan.');
+    })->name('member.profile.save');
+});
+
+Route::middleware('auth')->group(function () {
+    Route::view('/notifications', 'notifications.index')->name('notifications.index');
 });
 
 Route::prefix('api/v1/charts')->group(function () {

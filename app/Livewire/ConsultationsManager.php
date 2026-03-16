@@ -83,6 +83,9 @@ class ConsultationsManager extends Component
 
     public function store(): void
     {
+        if (($this->form['scheduled_at'] ?? null) === '') {
+            $this->form['scheduled_at'] = null;
+        }
         $data = $this->validate([
             'form.requester_name' => 'required|string|max:255',
             'form.topic' => 'required|string|max:255',
@@ -119,6 +122,9 @@ class ConsultationsManager extends Component
 
     public function update(): void
     {
+        if (($this->form['scheduled_at'] ?? null) === '') {
+            $this->form['scheduled_at'] = null;
+        }
         $data = $this->validate([
             'form.requester_name' => 'required|string|max:255',
             'form.topic' => 'required|string|max:255',

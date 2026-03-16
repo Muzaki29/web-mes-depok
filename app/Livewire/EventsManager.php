@@ -15,9 +15,9 @@ class EventsManager extends Component
 
     public int $perPage = 10;
 
-    public $events;
+    public array $events = [];
 
-    public $participants = [];
+    public array $participants = [];
 
     public bool $showCreate = false;
 
@@ -101,7 +101,12 @@ class EventsManager extends Component
             })->toArray();
         }
         $this->participants = $participants;
+        $this->events = $this->getFiltered();
 
-        return view('livewire.events-manager', ['paginator' => $this->paginator()]);
+        return view('livewire.events-manager', [
+            'paginator' => $this->paginator(),
+            'events' => $this->events,
+            'participants' => $this->participants,
+        ]);
     }
 }

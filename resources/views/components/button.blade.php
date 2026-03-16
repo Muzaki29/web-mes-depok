@@ -11,8 +11,14 @@
         'lg' => 'px-5 py-2.5',
     ][$attributes->get('size','md')];
     $variant = $variants[$attributes->get('variant','primary')] ?? $variants['primary'];
+    $href = $attributes->get('href');
 @endphp
-<button {{ $attributes->merge(['class'=>"inline-flex items-center gap-2 rounded-md font-medium shadow-sm focus:outline-none focus:ring-2 focus:ring-emerald-500/50 $variant $size"]) }}>
-    {{ $slot }}
-</button>
-
+@if($href)
+    <a {{ $attributes->merge(['class'=>"inline-flex items-center gap-2 rounded-md font-medium shadow-sm focus:outline-none focus:ring-2 focus:ring-emerald-500/50 $variant $size"]) }}>
+        {{ $slot }}
+    </a>
+@else
+    <button {{ $attributes->merge(['class'=>"inline-flex items-center gap-2 rounded-md font-medium shadow-sm focus:outline-none focus:ring-2 focus:ring-emerald-500/50 $variant $size"]) }}>
+        {{ $slot }}
+    </button>
+@endif

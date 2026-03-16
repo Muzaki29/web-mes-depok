@@ -6,6 +6,8 @@
     <div class="flex flex-wrap items-center gap-2">
         <x-button variant="secondary" href="{{ route('admin.members.export_csv') }}">Ekspor Anggota (CSV)</x-button>
         <x-button variant="secondary" href="{{ route('admin.consultations.export_csv') }}">Ekspor Konsultasi (CSV)</x-button>
+        <x-button variant="secondary" href="{{ route('admin.events.export_csv') }}">Ekspor Agenda (CSV)</x-button>
+        <x-button variant="secondary" href="{{ route('admin.documents.export_csv') }}">Ekspor Dokumen (CSV)</x-button>
     </div>
 </div>
 

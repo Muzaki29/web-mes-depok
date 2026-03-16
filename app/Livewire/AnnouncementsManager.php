@@ -27,6 +27,13 @@ class AnnouncementsManager extends Component
         'published_at' => '',
     ];
 
+    private function closeModals(): void
+    {
+        $this->showCreate = false;
+        $this->showEdit = false;
+        $this->showDelete = false;
+    }
+
     public function paginator(): LengthAwarePaginator
     {
         return Announcement::query()
@@ -37,12 +44,16 @@ class AnnouncementsManager extends Component
 
     public function create(): void
     {
+        $this->closeModals();
         $this->form = ['title' => '', 'body' => '', 'status' => 'draft', 'published_at' => ''];
         $this->showCreate = true;
     }
 
     public function store(): void
     {
+        if (($this->form['published_at'] ?? null) === '') {
+            $this->form['published_at'] = null;
+        }
         $data = $this->validate([
             'form.title' => 'required|string|max:255',
             'form.body' => 'nullable|string',
@@ -55,6 +66,7 @@ class AnnouncementsManager extends Component
 
     public function edit(int $id): void
     {
+        $this->closeModals();
         $row = Announcement::findOrFail($id);
         $this->editingId = $id;
         $this->form = [
@@ -68,6 +80,9 @@ class AnnouncementsManager extends Component
 
     public function update(): void
     {
+        if (($this->form['published_at'] ?? null) === '') {
+            $this->form['published_at'] = null;
+        }
         $data = $this->validate([
             'form.title' => 'required|string|max:255',
             'form.body' => 'nullable|string',
@@ -80,6 +95,7 @@ class AnnouncementsManager extends Component
 
     public function confirmDelete(int $id): void
     {
+        $this->closeModals();
         $this->editingId = $id;
         $this->showDelete = true;
     }

@@ -6,10 +6,10 @@
     <title>{{ $title ?? config('app.name', 'Org Portal') }}</title>
     <link rel="preconnect" href="https://fonts.bunny.net">
     <link href="https://fonts.bunny.net/css?family=instrument-sans:400,500,600,700" rel="stylesheet" />
+    <style>[x-cloak]{display:none!important}</style>
     @if (file_exists(public_path('build/manifest.json')) || file_exists(public_path('hot')))
         @vite(['resources/css/app.css','resources/js/app.js'])
     @else
-        <style>[x-cloak]{display:none!important}</style>
         <script>
             window.tailwind=window.tailwind||{};window.tailwind.config={theme:{extend:{colors:{brand:'#16a34a'}}}}
         </script>
@@ -21,7 +21,7 @@
 <body class="font-sans antialiased bg-gray-50 text-gray-900">
     <div class="min-h-screen">
         <header class="sticky top-0 z-40 bg-white/80 backdrop-blur border-b border-gray-200">
-            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="{{ request()->is('admin/*') ? 'w-full' : 'max-w-7xl mx-auto' }} px-4 sm:px-6 lg:px-8">
                 <div class="flex h-16 items-center justify-between">
                     <div class="flex items-center gap-3">
                         @if (request()->is('admin/*'))
@@ -29,45 +29,69 @@
                             <svg class="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
                         </button>
                         @endif
-                        <a href="{{ url('/') }}" class="flex items-center gap-2">
+                        <a href="{{ url('/') }}" class="flex items-center gap-2 {{ request()->is('admin/*') ? 'lg:pl-3' : '' }}">
                             <span class="inline-flex h-9 w-9 items-center justify-center rounded-md bg-emerald-600 text-white font-semibold">EC</span>
                             <span class="font-semibold text-lg">EconoComm</span>
                         </a>
                     </div>
                     <div class="flex items-center gap-3">
-                        <div x-data="{open:false}" class="relative">
-                            <button @click="open=!open" class="relative p-2 rounded-full hover:bg-gray-100 focus:outline-none">
-                                <svg class="h-6 w-6 text-gray-600" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6 6 0 10-12 0v3.159c0 .538-.214 1.055-.595 1.436L4 17h5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-                                <span class="absolute -top-0.5 -right-0.5 inline-flex h-4 w-4 items-center justify-center rounded-full bg-emerald-600 text-white text-[10px]">3</span>
-                            </button>
-                            <div x-cloak x-show="open" @click.outside="open=false"
-                                 x-transition:enter="transition ease-out duration-150"
-                                 x-transition:enter-start="opacity-0 translate-y-1 scale-95"
-                                 x-transition:enter-end="opacity-100 translate-y-0 scale-100"
-                                 x-transition:leave="transition ease-in duration-100"
-                                 x-transition:leave-start="opacity-100 translate-y-0 scale-100"
-                                 x-transition:leave-end="opacity-0 translate-y-1 scale-95"
-                                 class="absolute right-0 mt-2 w-72 bg-white rounded-lg shadow-lg ring-1 ring-black/5 overflow-hidden">
-                                <div class="px-4 py-3 border-b text-sm font-medium">Notifikasi</div>
-                                <div class="divide-y">
-                                    <div class="p-4 text-sm">
-                                        <p class="font-medium">Pengingat perpanjangan keanggotaan</p>
-                                        <p class="text-gray-500">Masa berlaku keanggotaan Anda berakhir 30 hari lagi.</p>
+                        @auth
+                            @php
+                                $notificationsEnabled = \Illuminate\Support\Facades\Schema::hasTable('notifications');
+                                $unreadCount = $notificationsEnabled ? auth()->user()->unreadNotifications()->count() : 0;
+                                $latestNotifications = $notificationsEnabled
+                                    ? auth()->user()->notifications()->latest()->limit(5)->get()
+                                    : collect();
+                            @endphp
+                            <div x-data="{open:false}" class="relative">
+                                <button @click="open=!open" class="relative p-2 rounded-full hover:bg-gray-100 focus:outline-none">
+                                    <svg class="h-6 w-6 text-gray-600" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6 6 0 10-12 0v3.159c0 .538-.214 1.055-.595 1.436L4 17h5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                                    @if($unreadCount > 0)
+                                        <span class="absolute -top-0.5 -right-0.5 inline-flex min-w-4 h-4 px-1 items-center justify-center rounded-full bg-emerald-600 text-white text-[10px]">
+                                            {{ $unreadCount > 99 ? '99+' : $unreadCount }}
+                                        </span>
+                                    @endif
+                                </button>
+                                <div x-cloak x-show="open" @click.outside="open=false"
+                                     x-transition:enter="transition ease-out duration-150"
+                                     x-transition:enter-start="opacity-0 translate-y-1 scale-95"
+                                     x-transition:enter-end="opacity-100 translate-y-0 scale-100"
+                                     x-transition:leave="transition ease-in duration-100"
+                                     x-transition:leave-start="opacity-100 translate-y-0 scale-100"
+                                     x-transition:leave-end="opacity-0 translate-y-1 scale-95"
+                                     class="absolute right-0 mt-2 w-80 bg-white rounded-lg shadow-lg ring-1 ring-black/5 overflow-hidden">
+                                    <div class="px-4 py-3 border-b text-sm font-medium flex items-center justify-between">
+                                        <span>Notifikasi</span>
+                                        <a href="{{ route('notifications.index') }}" class="text-xs text-emerald-700 hover:underline">Lihat semua</a>
                                     </div>
-                                    <div class="p-4 text-sm">
-                                        <p class="font-medium">Undangan agenda baru</p>
-                                        <p class="text-gray-500">Malam Jejaring Anggota</p>
-                                    </div>
-                                    <div class="p-4 text-sm">
-                                        <p class="font-medium">Sertifikat tersedia</p>
-                                        <p class="text-gray-500">Sertifikat pelatihan siap diunduh.</p>
+                                    <div class="divide-y">
+                                        @forelse($latestNotifications as $n)
+                                            @php
+                                                $title = $n->data['title'] ?? 'Notifikasi';
+                                                $body = $n->data['body'] ?? null;
+                                                $url = $n->data['url'] ?? route('notifications.index');
+                                            @endphp
+                                            <a href="{{ $url }}" class="block p-4 text-sm hover:bg-gray-50">
+                                                <p class="font-medium {{ $n->read_at ? 'text-gray-900' : 'text-emerald-800' }}">{{ $title }}</p>
+                                                @if($body)
+                                                    <p class="text-gray-500 mt-0.5 line-clamp-2">{{ $body }}</p>
+                                                @endif
+                                            </a>
+                                        @empty
+                                            <div class="p-4 text-sm text-gray-500">Belum ada notifikasi.</div>
+                                        @endforelse
                                     </div>
                                 </div>
                             </div>
-                        </div>
+                        @endauth
                         <div x-data="{open:false}" class="relative">
                             <button @click="open=!open" class="flex items-center gap-3 focus:outline-none">
-                                <img class="h-9 w-9 rounded-full ring-2 ring-emerald-100" src="https://ui-avatars.com/api/?name={{ urlencode(Auth::user()->name ?? 'Guest') }}&background=16a34a&color=fff" alt="user">
+                                @php
+                                    $avatar = auth()->check() && auth()->user()->avatar
+                                        ? \Illuminate\Support\Facades\Storage::disk('public')->url(auth()->user()->avatar)
+                                        : 'https://ui-avatars.com/api/?name='.urlencode(Auth::user()->name ?? 'Guest').'&background=16a34a&color=fff';
+                                @endphp
+                                <img class="h-9 w-9 rounded-full ring-2 ring-emerald-100 object-cover" src="{{ $avatar }}" alt="user">
                                 <span class="hidden sm:block text-sm font-medium">{{ Auth::user()->name ?? 'Guest' }}</span>
                                 <svg class="h-4 w-4 text-gray-500 sm:block hidden" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M19 9l-7 7-7-7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
                             </button>
@@ -81,6 +105,10 @@
                                  class="absolute right-0 mt-2 w-56 bg-white rounded-lg shadow-lg ring-1 ring-black/5 overflow-hidden">
                                 @auth
                                     <a href="{{ url('/member/dashboard') }}" class="block px-4 py-2 text-sm hover:bg-gray-50">Portal Anggota</a>
+                                    @if(in_array(auth()->user()->role, ['member','super_admin','org_admin'], true))
+                                        <a href="{{ route('member.profile') }}" class="block px-4 py-2 text-sm hover:bg-gray-50">Edit Profil</a>
+                                        <a href="{{ route('notifications.index') }}" class="block px-4 py-2 text-sm hover:bg-gray-50">Notifikasi</a>
+                                    @endif
                                     @if(auth()->user()->role === 'super_admin' || auth()->user()->role === 'org_admin')
                                         <a href="{{ url('/admin/dashboard') }}" class="block px-4 py-2 text-sm hover:bg-gray-50">Panel Admin</a>
                                     @endif
@@ -158,6 +186,12 @@
                                         'href' => url('/admin/broadcast'),
                                         'active' => request()->is('admin/broadcast*'),
                                         'icon' => '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M4 11a8 8 0 0116 0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M7 11a5 5 0 0110 0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M12 14a2 2 0 00-2 2v4h4v-4a2 2 0 00-2-2z" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+                                    ],
+                                    'notifications' => [
+                                        'label' => 'Notifikasi',
+                                        'href' => url('/admin/notifications'),
+                                        'active' => request()->is('admin/notifications*'),
+                                        'icon' => '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6 6 0 10-12 0v3.159c0 .538-.214 1.055-.595 1.436L4 17h5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M13.73 21a2 2 0 01-3.46 0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>',
                                     ],
                                     'consultations' => [
                                         'label' => 'Konsultasi',

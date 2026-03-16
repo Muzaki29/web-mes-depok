@@ -70,7 +70,7 @@
         {{ $paginator->links() }}
     </div>
 
-    <x-modal :show="$showCreate">
+    <x-modal wire:model="showCreate">
         <x-slot:title>Tambah Konsultasi</x-slot:title>
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
@@ -110,13 +110,13 @@
         </div>
         <x-slot:footer>
             <div class="flex justify-end gap-2">
-                <x-button variant="secondary" x-on:click="$el.closest('[x-data]').__x.$data.open=false">Batal</x-button>
+                <x-button variant="secondary" x-on:click="open=false">Batal</x-button>
                 <x-button wire:click="store">Simpan</x-button>
             </div>
         </x-slot:footer>
     </x-modal>
 
-    <x-modal :show="$showEdit">
+    <x-modal wire:model="showEdit">
         <x-slot:title>Ubah Konsultasi</x-slot:title>
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
@@ -156,18 +156,18 @@
         </div>
         <x-slot:footer>
             <div class="flex justify-end gap-2">
-                <x-button variant="secondary" x-on:click="$el.closest('[x-data]').__x.$data.open=false">Batal</x-button>
+                <x-button variant="secondary" x-on:click="open=false">Batal</x-button>
                 <x-button wire:click="update">Simpan</x-button>
             </div>
         </x-slot:footer>
     </x-modal>
 
-    <x-modal :show="$showDelete" maxWidth="sm">
+    <x-modal wire:model="showDelete" maxWidth="sm">
         <x-slot:title>Hapus Konsultasi</x-slot:title>
         <p>Yakin ingin menghapus konsultasi ini?</p>
         <x-slot:footer>
             <div class="flex justify-end gap-2">
-                <x-button variant="secondary" x-on:click="$el.closest('[x-data]').__x.$data.open=false">Batal</x-button>
+                <x-button variant="secondary" x-on:click="open=false">Batal</x-button>
                 <x-button variant="danger" wire:click="destroy">Hapus</x-button>
             </div>
         </x-slot:footer>

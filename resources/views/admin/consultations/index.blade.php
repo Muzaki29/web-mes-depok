@@ -5,7 +5,6 @@
     <h1 class="text-2xl font-semibold">Konsultasi</h1>
     <div class="flex flex-wrap items-center gap-2">
         <x-button variant="secondary" href="{{ route('admin.consultations.export_csv') }}">Ekspor Konsultasi (CSV)</x-button>
-        <x-button x-data @click="$dispatch('openCreateConsultation')">Tambah Konsultasi</x-button>
     </div>
 </div>
 <livewire:consultations-manager />

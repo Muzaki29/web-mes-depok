@@ -51,6 +51,9 @@ class ArticlesManager extends Component
 
     public function store(): void
     {
+        if (($this->form['published_at'] ?? null) === '') {
+            $this->form['published_at'] = null;
+        }
         $data = $this->validate([
             'form.title' => 'required|string|max:255',
             'form.excerpt' => 'nullable|string|max:500',
@@ -100,6 +103,9 @@ class ArticlesManager extends Component
 
     public function update(): void
     {
+        if (($this->form['published_at'] ?? null) === '') {
+            $this->form['published_at'] = null;
+        }
         $data = $this->validate([
             'form.title' => 'required|string|max:255',
             'form.excerpt' => 'nullable|string|max:500',

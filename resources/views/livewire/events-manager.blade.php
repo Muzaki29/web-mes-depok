@@ -27,7 +27,7 @@
                     <th class="px-4 py-3"></th>
                 </tr>
             </x-slot:head>
-            @foreach($paginator as $e)
+            @forelse($paginator as $e)
             <tr>
                 <td class="px-4 py-3 font-medium">{{ $e['title'] }}</td>
                 <td class="px-4 py-3">{{ $e['date'] }}</td>
@@ -37,7 +37,11 @@
                     <x-button size="sm" variant="secondary" @click="tab='participants'">Peserta</x-button>
                 </td>
             </tr>
-            @endforeach
+            @empty
+            <tr>
+                <td class="px-4 py-6 text-center text-sm text-gray-500" colspan="5">Belum ada agenda.</td>
+            </tr>
+            @endforelse
         </x-table>
         <div class="mt-4">{{ $paginator->links() }}</div>
     </div>
@@ -45,7 +49,7 @@
     <div x-show="tab==='participants'">
         <x-card>
             <x-slot:title>Peserta</x-slot:title>
-            @foreach($events as $e)
+            @forelse($events as $e)
                 <div class="mb-4">
                     <p class="font-medium">{{ $e['title'] }}</p>
                     <div class="mt-2 rounded-lg border">
@@ -65,11 +69,13 @@
                         </div>
                     </div>
                 </div>
-            @endforeach
+            @empty
+                <div class="py-6 text-gray-500 text-sm">Belum ada agenda.</div>
+            @endforelse
         </x-card>
     </div>
 
-    <x-modal :show="$showCreate">
+    <x-modal wire:model="showCreate">
         <x-slot:title>Buat Agenda</x-slot:title>
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
@@ -91,7 +97,7 @@
         </div>
         <x-slot:footer>
             <div class="flex justify-end gap-2">
-                <x-button variant="secondary" x-on:click="$el.closest('[x-data]').__x.$data.open=false">Batal</x-button>
+                <x-button variant="secondary" x-on:click="open=false">Batal</x-button>
                 <x-button wire:click="store">Simpan</x-button>
             </div>
         </x-slot:footer>

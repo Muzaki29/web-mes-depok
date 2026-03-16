@@ -15,26 +15,30 @@
                 <th class="px-4 py-3"></th>
             </tr>
         </x-slot:head>
-        @foreach($paginator as $a)
-        <tr>
-            <td class="px-4 py-3">{{ $a->title }}</td>
-            <td class="px-4 py-3">
-                @php
-                    $statusLabel = $a->status === 'published' ? 'Terbit' : 'Draf';
-                @endphp
-                <span class="inline-flex px-2 py-1 rounded-full text-xs {{ $a->status=='published'?'bg-emerald-50 text-emerald-700':'bg-gray-100 text-gray-700' }}">{{ $statusLabel }}</span>
-            </td>
-            <td class="px-4 py-3">{{ optional($a->published_at)->format('Y-m-d H:i') ?: '—' }}</td>
-            <td class="px-4 py-3 text-right">
-                <x-button size="sm" variant="secondary" wire:click="edit({{ $a->id }})">Ubah</x-button>
-                <x-button size="sm" variant="danger" wire:click="confirmDelete({{ $a->id }})">Hapus</x-button>
-            </td>
-        </tr>
-        @endforeach
+        @forelse($paginator as $a)
+            <tr>
+                <td class="px-4 py-3">{{ $a->title }}</td>
+                <td class="px-4 py-3">
+                    @php
+                        $statusLabel = $a->status === 'published' ? 'Terbit' : 'Draf';
+                    @endphp
+                    <span class="inline-flex px-2 py-1 rounded-full text-xs {{ $a->status=='published'?'bg-emerald-50 text-emerald-700':'bg-gray-100 text-gray-700' }}">{{ $statusLabel }}</span>
+                </td>
+                <td class="px-4 py-3">{{ optional($a->published_at)->format('Y-m-d H:i') ?: '—' }}</td>
+                <td class="px-4 py-3 text-right">
+                    <x-button size="sm" variant="secondary" wire:click="edit({{ $a->id }})">Ubah</x-button>
+                    <x-button size="sm" variant="danger" wire:click="confirmDelete({{ $a->id }})">Hapus</x-button>
+                </td>
+            </tr>
+        @empty
+            <tr>
+                <td colspan="4" class="px-4 py-8 text-center text-sm text-gray-500">Belum ada artikel.</td>
+            </tr>
+        @endforelse
     </x-table>
     <div class="mt-4">{{ $paginator->links() }}</div>
 
-    <x-modal :show="$showCreate">
+    <x-modal wire:model="showCreate">
         <x-slot:title>Buat Artikel</x-slot:title>
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div class="sm:col-span-2">
@@ -67,13 +71,13 @@
         </div>
         <x-slot:footer>
             <div class="flex justify-end gap-2">
-                <x-button variant="secondary" x-on:click="$el.closest('[x-data]').__x.$data.open=false">Batal</x-button>
+                <x-button variant="secondary" x-on:click="open=false">Batal</x-button>
                 <x-button wire:click="store">Simpan</x-button>
             </div>
         </x-slot:footer>
     </x-modal>
 
-    <x-modal :show="$showEdit">
+    <x-modal wire:model="showEdit">
         <x-slot:title>Ubah Artikel</x-slot:title>
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div class="sm:col-span-2">
@@ -106,18 +110,18 @@
         </div>
         <x-slot:footer>
             <div class="flex justify-end gap-2">
-                <x-button variant="secondary" x-on:click="$el.closest('[x-data]').__x.$data.open=false">Batal</x-button>
+                <x-button variant="secondary" x-on:click="open=false">Batal</x-button>
                 <x-button wire:click="update">Simpan</x-button>
             </div>
         </x-slot:footer>
     </x-modal>
 
-    <x-modal :show="$showDelete" maxWidth="sm">
+    <x-modal wire:model="showDelete" maxWidth="sm">
         <x-slot:title>Hapus Artikel</x-slot:title>
         <p>Yakin ingin menghapus artikel ini?</p>
         <x-slot:footer>
             <div class="flex justify-end gap-2">
-                <x-button variant="secondary" x-on:click="$el.closest('[x-data]').__x.$data.open=false">Batal</x-button>
+                <x-button variant="secondary" x-on:click="open=false">Batal</x-button>
                 <x-button variant="danger" wire:click="destroy">Hapus</x-button>
             </div>
         </x-slot:footer>

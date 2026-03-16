@@ -5,7 +5,7 @@
     <h1 class="text-2xl font-semibold">Member Portal</h1>
     <div class="flex items-center gap-2">
         <x-button variant="secondary">Public Site</x-button>
-        <x-button>Edit Profile</x-button>
+        <x-button href="{{ route('member.profile') }}">Edit Profile</x-button>
     </div>
 </div>
 
@@ -43,11 +43,28 @@
     </x-card>
     <x-card>
         <x-slot:title>Notifications</x-slot:title>
+        @php
+            $notificationsEnabled = \Illuminate\Support\Facades\Schema::hasTable('notifications');
+            $latest = $notificationsEnabled ? auth()->user()->notifications()->latest()->limit(3)->get() : collect();
+        @endphp
         <ul class="divide-y">
-            <li class="py-2 text-sm">Membership renewal reminder — 30 days left</li>
-            <li class="py-2 text-sm">New event invitation — Networking Night</li>
-            <li class="py-2 text-sm">Certificate available — Workshop</li>
+            @forelse($latest as $n)
+                @php
+                    $title = $n->data['title'] ?? 'Notifikasi';
+                    $url = $n->data['url'] ?? route('notifications.index');
+                @endphp
+                <li class="py-2 text-sm">
+                    <a href="{{ $url }}" class="{{ $n->read_at ? 'text-gray-700' : 'text-emerald-800 font-medium' }} hover:underline">
+                        {{ $title }}
+                    </a>
+                </li>
+            @empty
+                <li class="py-2 text-sm text-gray-500">Belum ada notifikasi.</li>
+            @endforelse
         </ul>
+        <div class="mt-3 text-right">
+            <a href="{{ route('notifications.index') }}" class="text-sm text-emerald-700 hover:underline">Lihat semua</a>
+        </div>
     </x-card>
 </div>
 
@@ -116,4 +133,3 @@
     </x-card>
 </div>
 @endsection
-

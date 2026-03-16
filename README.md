@@ -10,6 +10,8 @@ Repositori resmi untuk website Masyarakat Ekonomi Syariah (MES) Kota Depok. Webs
 - Lokalisasi admin ke Bahasa Indonesia (label, tombol, notifikasi).
 - Perapihan responsivitas tabel/form admin untuk tampilan mobile.
 - Ekspor data Konsultasi ke CSV (menu Konsultasi & Laporan).
+- Fitur Edit Profil (nama, email, password) untuk pengguna di Portal Anggota.
+- Notifikasi database: inbox notifikasi, badge jumlah unread, dan menu admin kirim notifikasi.
 
 ## 🚀 Fitur Utama
 
