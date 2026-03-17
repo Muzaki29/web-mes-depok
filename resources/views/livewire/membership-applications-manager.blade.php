@@ -47,13 +47,20 @@
     </x-table>
     <div class="mt-4">{{ $paginator->links() }}</div>
 
-    <x-modal wire:model="showReview" maxWidth="md">
+    <x-modal wire:model="showReview" maxWidth="md" tone="blue">
         <x-slot:title>Tinjau Aplikasi</x-slot:title>
-        <p>Setujui atau tolak aplikasi keanggotaan ini. Persetujuan akan otomatis membuat data Member.</p>
+        <x-slot:subtitle>Setujui atau tolak permohonan keanggotaan.</x-slot:subtitle>
+        <x-slot:icon>
+            <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 11c1.657 0 3-1.567 3-3.5S13.657 4 12 4 9 5.567 9 7.5s1.343 3.5 3 3.5z" />
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 20v-1a4 4 0 00-4-4H8a4 4 0 00-4 4v1" />
+            </svg>
+        </x-slot:icon>
+        <p class="text-sm text-gray-600">Setujui atau tolak aplikasi keanggotaan ini. Jika disetujui, sistem akan otomatis membuat data Member.</p>
         <x-slot:footer>
-            <div class="flex justify-end gap-2">
-                <x-button variant="danger" wire:click="reject">Tolak</x-button>
-                <x-button wire:click="approve">Setujui</x-button>
+            <div class="flex flex-col-reverse sm:flex-row sm:justify-end gap-2">
+                <x-button class="w-full sm:w-auto" variant="danger" wire:click="reject">Tolak</x-button>
+                <x-button class="w-full sm:w-auto" wire:click="approve">Setujui</x-button>
             </div>
         </x-slot:footer>
     </x-modal>

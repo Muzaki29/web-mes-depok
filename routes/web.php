@@ -61,16 +61,16 @@ Route::get('/news', function (\Illuminate\Http\Request $request) {
     return view('public.news', compact('articles'));
 })->name('news');
 Route::get('/news/{slug}', [PublicArticleController::class, 'show'])->name('news.show');
-Route::get('/documents/{slug}/download', [PublicDocumentController::class, 'download'])->name('documents.download');
+Route::get('/documents/{slug}/download', [PublicDocumentController::class, 'download'])->middleware('throttle:60,1')->name('documents.download');
 Route::get('/events', \App\Livewire\PublicEvents::class)->name('events');
 Route::get('/events/{slug}', [PublicEventController::class, 'show'])->name('events.show');
-Route::post('/events/{slug}/register', [PublicEventController::class, 'register'])->name('events.register');
+Route::post('/events/{slug}/register', [PublicEventController::class, 'register'])->middleware('throttle:10,1')->name('events.register');
 Route::get('/contact', [PublicContactController::class, 'create'])->name('contact');
-Route::post('/contact', [PublicContactController::class, 'store'])->name('contact.submit');
+Route::post('/contact', [PublicContactController::class, 'store'])->middleware('throttle:10,1')->name('contact.submit');
 Route::get('/programs', [PublicProgramController::class, 'index'])->name('programs');
 Route::get('/programs/{slug}', [PublicProgramController::class, 'show'])->name('programs.show');
 Route::get('/membership', [PublicMembershipController::class, 'create'])->name('membership');
-Route::post('/membership', [PublicMembershipController::class, 'store'])->name('membership.submit');
+Route::post('/membership', [PublicMembershipController::class, 'store'])->middleware('throttle:10,1')->name('membership.submit');
 
 Route::view('/about', 'public.about.profile')->name('about');
 Route::view('/about/anggaran-dasar', 'public.about.statute')->name('about.statute');
@@ -82,7 +82,7 @@ Route::middleware('guest')->group(function () {
     Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
     Route::post('/login', [AuthController::class, 'login'])->middleware('throttle:10,1');
     Route::get('/register', [AuthController::class, 'showRegister'])->name('register');
-    Route::post('/register', [AuthController::class, 'register'])->name('register.submit');
+    Route::post('/register', [AuthController::class, 'register'])->middleware('throttle:10,1')->name('register.submit');
     Route::get('/auth/google', [AuthController::class, 'redirectToGoogle'])->name('auth.google');
     Route::get('/auth/google/callback', [AuthController::class, 'handleGoogleCallback'])->name('auth.google.callback');
 });

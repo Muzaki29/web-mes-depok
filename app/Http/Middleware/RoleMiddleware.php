@@ -11,10 +11,6 @@ class RoleMiddleware
 {
     public function handle(Request $request, Closure $next, ...$roles): Response
     {
-        if (app()->environment('local') && ! Auth::check()) {
-            return $next($request);
-        }
-
         if (! Auth::check()) {
             return redirect('/')->with('error', 'Please sign in');
         }

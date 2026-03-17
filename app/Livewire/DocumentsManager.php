@@ -107,7 +107,7 @@ class DocumentsManager extends Component
             $categoryId = DocumentCategory::firstOrCreate(['name' => $categoryName])->id;
         }
 
-        $path = $this->fileUpload->store('documents', 'public');
+        $path = $this->fileUpload->store('documents', 'local');
         $ext = pathinfo($path, PATHINFO_EXTENSION);
         $slugBase = Str::slug($data['title']);
         if ($slugBase === '') {
@@ -174,9 +174,10 @@ class DocumentsManager extends Component
         ];
 
         if ($this->fileUpload) {
-            $newPath = $this->fileUpload->store('documents', 'public');
+            $newPath = $this->fileUpload->store('documents', 'local');
             if ($doc->path) {
-                Storage::disk('public')->delete($doc->path);
+                $deleteDisk = Storage::disk('local')->exists($doc->path) ? 'local' : 'public';
+                Storage::disk($deleteDisk)->delete($doc->path);
             }
             $payload['path'] = $newPath;
             $payload['mime'] = $this->fileUpload->getMimeType();
@@ -201,7 +202,8 @@ class DocumentsManager extends Component
         $doc = Document::find($this->editingId);
         if ($doc) {
             if ($doc->path) {
-                Storage::disk('public')->delete($doc->path);
+                $deleteDisk = Storage::disk('local')->exists($doc->path) ? 'local' : 'public';
+                Storage::disk($deleteDisk)->delete($doc->path);
             }
             $doc->delete();
         }

@@ -15,7 +15,7 @@ class DocumentController extends Controller
         if (! Gate::allows('download-document', $document)) {
             abort(403);
         }
-        $disk = 'public';
+        $disk = Storage::disk('local')->exists($document->path) ? 'local' : 'public';
         if (! Storage::disk($disk)->exists($document->path)) {
             abort(404);
         }

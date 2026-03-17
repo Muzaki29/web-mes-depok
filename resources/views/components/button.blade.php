@@ -12,13 +12,19 @@
     ][$attributes->get('size','md')];
     $variant = $variants[$attributes->get('variant','primary')] ?? $variants['primary'];
     $href = $attributes->get('href');
+    $base = 'inline-flex items-center gap-2 rounded-md font-medium shadow-sm focus:outline-none focus:ring-2 focus:ring-emerald-500/50 transition-colors disabled:opacity-50 disabled:pointer-events-none';
+    $attrKeys = array_keys($attributes->getAttributes());
+    $hasClickHandler = collect($attrKeys)->contains(fn ($k) => str_starts_with((string) $k, 'wire:click')
+        || str_starts_with((string) $k, 'x-on:click')
+        || str_starts_with((string) $k, '@click'));
+    $computedType = $attributes->get('type') ?? ($hasClickHandler ? 'button' : 'submit');
 @endphp
 @if($href)
-    <a {{ $attributes->merge(['class'=>"inline-flex items-center gap-2 rounded-md font-medium shadow-sm focus:outline-none focus:ring-2 focus:ring-emerald-500/50 $variant $size"]) }}>
+    <a {{ $attributes->merge(['class'=>"$base $variant $size"]) }}>
         {{ $slot }}
     </a>
 @else
-    <button {{ $attributes->merge(['class'=>"inline-flex items-center gap-2 rounded-md font-medium shadow-sm focus:outline-none focus:ring-2 focus:ring-emerald-500/50 $variant $size"]) }}>
+    <button type="{{ $computedType }}" {{ $attributes->merge(['class'=>"$base $variant $size"]) }}>
         {{ $slot }}
     </button>
 @endif
