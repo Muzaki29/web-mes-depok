@@ -6,7 +6,55 @@
         </div>
         <x-button wire:click="create">Tambah Mitra</x-button>
     </div>
-    <x-table>
+    <div class="sm:hidden space-y-3">
+        @forelse($paginator as $p)
+            @php
+                $typeLabel = match ($p->type) {
+                    'company' => 'Perusahaan',
+                    'ngo' => 'NGO',
+                    'gov' => 'Pemerintah',
+                    'edu' => 'Pendidikan',
+                    'other' => 'Lainnya',
+                    default => $p->type,
+                };
+            @endphp
+            <div class="rounded-2xl border border-gray-200 bg-white p-4 shadow-sm">
+                <div class="flex items-start gap-3">
+                    <div class="shrink-0">
+                        @if(!empty($p->logo))
+                            <img class="h-12 w-12 rounded-xl object-cover ring-1 ring-gray-200" src="{{ asset('storage/'.$p->logo) }}" alt="{{ $p->name }}">
+                        @else
+                            <div class="h-12 w-12 rounded-xl bg-gray-100 ring-1 ring-gray-200"></div>
+                        @endif
+                    </div>
+                    <div class="min-w-0 flex-1">
+                        <div class="flex items-start justify-between gap-3">
+                            <div class="min-w-0">
+                                <div class="font-semibold text-gray-900 truncate">{{ $p->name }}</div>
+                                <div class="mt-0.5 text-xs text-gray-500">{{ $typeLabel }}</div>
+                            </div>
+                            @if(!empty($p->website))
+                                <a href="{{ $p->website }}" target="_blank" rel="noopener noreferrer" class="shrink-0 text-sm font-medium text-emerald-700 hover:underline">Website</a>
+                            @endif
+                        </div>
+
+                        @if(!empty($p->website))
+                            <div class="mt-2 text-xs text-gray-500 truncate">{{ $p->website }}</div>
+                        @endif
+
+                        <div class="mt-4 grid grid-cols-2 gap-2">
+                            <x-button class="w-full" variant="secondary" wire:click="edit({{ $p->id }})">Ubah</x-button>
+                            <x-button class="w-full" variant="danger" wire:click="confirmDelete({{ $p->id }})">Hapus</x-button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        @empty
+            <div class="rounded-2xl border border-gray-200 bg-white px-4 py-8 text-center text-sm text-gray-500 shadow-sm">Belum ada mitra.</div>
+        @endforelse
+    </div>
+
+    <x-table class="hidden sm:block">
         <x-slot:head>
             <tr>
                 <th class="px-4 py-3 text-left text-xs text-gray-500 uppercase">Logo</th>

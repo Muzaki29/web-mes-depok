@@ -20,7 +20,70 @@
             <x-button wire:click="create">Tambah Anggota</x-button>
         </div>
     </div>
-    <x-table>
+    <div class="sm:hidden space-y-3">
+        <div class="flex items-center justify-between gap-3 rounded-2xl border border-gray-200 bg-white px-4 py-3 shadow-sm">
+            <label class="inline-flex items-center gap-2 text-sm text-gray-700">
+                <input type="checkbox" wire:model.live="selectAll" class="rounded border-gray-300 text-emerald-600 shadow-sm focus:border-emerald-300 focus:ring focus:ring-emerald-200 focus:ring-opacity-50">
+                Pilih semua
+            </label>
+            <div class="text-xs text-gray-500">{{ $paginator->total() }} data</div>
+        </div>
+
+        @forelse($paginator as $row)
+            @php
+                $categoryLabel = match (optional($row->category)->name) {
+                    'Standard' => 'Standar',
+                    'Premium' => 'Premium',
+                    default => optional($row->category)->name,
+                };
+                $statusLabel = match ($row->status) {
+                    'active' => 'Aktif',
+                    'pending' => 'Menunggu',
+                    'expired' => 'Kedaluwarsa',
+                    'rejected' => 'Ditolak',
+                    default => ucfirst($row->status),
+                };
+                $isActive = $row->status === 'active';
+            @endphp
+            <div wire:key="card-{{ $row->id }}" class="rounded-2xl border border-gray-200 bg-white p-4 shadow-sm {{ in_array($row->id, $selected) ? 'ring-2 ring-emerald-200' : '' }}">
+                <div class="flex items-start gap-3">
+                    <input type="checkbox" value="{{ $row->id }}" wire:model.live="selected" class="mt-1 rounded border-gray-300 text-emerald-600 shadow-sm focus:border-emerald-300 focus:ring focus:ring-emerald-200 focus:ring-opacity-50">
+                    <div class="min-w-0 flex-1">
+                        <div class="flex items-start justify-between gap-3">
+                            <div class="min-w-0">
+                                <div class="font-semibold text-gray-900 truncate">{{ $row->name }}</div>
+                                <div class="mt-0.5 text-xs text-gray-500">#{{ $row->id }} • {{ $row->membership_no ?: '—' }}</div>
+                            </div>
+                            <span class="inline-flex items-center gap-1 text-xs {{ $isActive ? 'text-emerald-700' : 'text-amber-700' }}">
+                                <span class="h-2 w-2 rounded-full {{ $isActive ? 'bg-emerald-500' : 'bg-amber-500' }}"></span>
+                                {{ $statusLabel }}
+                            </span>
+                        </div>
+
+                        <div class="mt-3 grid grid-cols-2 gap-3 text-xs">
+                            <div>
+                                <div class="text-gray-500">Kategori</div>
+                                <div class="font-medium text-gray-900">{{ $categoryLabel ?? '—' }}</div>
+                            </div>
+                            <div>
+                                <div class="text-gray-500">Berlaku Sampai</div>
+                                <div class="font-medium text-gray-900">{{ optional($row->valid_until)->format('Y-m-d') ?: '—' }}</div>
+                            </div>
+                        </div>
+
+                        <div class="mt-4 grid grid-cols-2 gap-2">
+                            <x-button class="w-full" variant="secondary" wire:click="edit({{ $row->id }})">Ubah</x-button>
+                            <x-button class="w-full" variant="danger" wire:click="confirmDelete({{ $row->id }})">Hapus</x-button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        @empty
+            <div class="rounded-2xl border border-gray-200 bg-white px-4 py-8 text-center text-sm text-gray-500 shadow-sm">Belum ada anggota.</div>
+        @endforelse
+    </div>
+
+    <x-table class="hidden sm:block">
         <x-slot:head>
             <tr>
                 <th class="px-4 py-3 w-4">

@@ -6,7 +6,27 @@
         </div>
         <x-button wire:click="create">Buat Surat</x-button>
     </div>
-    <x-table>
+    <div class="sm:hidden space-y-3">
+        @forelse($paginator as $l)
+            <div class="rounded-2xl border border-gray-200 bg-white p-4 shadow-sm">
+                <div class="flex items-start justify-between gap-3">
+                    <div class="min-w-0">
+                        <div class="font-semibold text-gray-900 truncate">{{ $l['subject'] }}</div>
+                        <div class="mt-0.5 text-xs text-gray-500 truncate">{{ $l['number'] }}</div>
+                    </div>
+                    <span class="shrink-0 inline-flex px-2 py-1 rounded-full text-xs bg-gray-100 text-gray-700">{{ $l['direction'] === 'outgoing' ? 'Keluar' : 'Masuk' }}</span>
+                </div>
+                <div class="mt-4 grid grid-cols-2 gap-2">
+                    <x-button class="w-full" variant="secondary" wire:click="edit({{ $l['id'] }})">Ubah</x-button>
+                    <x-button class="w-full" variant="danger" wire:click="confirmDelete({{ $l['id'] }})">Hapus</x-button>
+                </div>
+            </div>
+        @empty
+            <div class="rounded-2xl border border-gray-200 bg-white px-4 py-8 text-center text-sm text-gray-500 shadow-sm">Belum ada surat.</div>
+        @endforelse
+    </div>
+
+    <x-table class="hidden sm:block">
         <x-slot:head>
             <tr>
                 <th class="px-4 py-3 text-left text-xs text-gray-500 uppercase">Nomor</th>

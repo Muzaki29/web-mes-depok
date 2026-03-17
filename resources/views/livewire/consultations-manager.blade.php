@@ -17,7 +17,49 @@
         <x-button wire:click="create">Tambah Konsultasi</x-button>
     </div>
 
-    <x-table>
+    <div class="sm:hidden space-y-3">
+        @forelse($paginator as $c)
+            @php
+                $statusLabel = match ($c->status) {
+                    'submitted' => 'Diajukan',
+                    'assigned' => 'Ditugaskan',
+                    'scheduled' => 'Terjadwal',
+                    'completed' => 'Selesai',
+                    'cancelled' => 'Dibatalkan',
+                    default => $c->status,
+                };
+                $statusClass = match ($c->status) {
+                    'submitted' => 'bg-gray-100 text-gray-700',
+                    'assigned' => 'bg-blue-50 text-blue-700',
+                    'scheduled' => 'bg-amber-50 text-amber-700',
+                    'completed' => 'bg-emerald-50 text-emerald-700',
+                    'cancelled' => 'bg-red-50 text-red-700',
+                    default => 'bg-gray-100 text-gray-700',
+                };
+            @endphp
+            <div class="rounded-2xl border border-gray-200 bg-white p-4 shadow-sm">
+                <div class="flex items-start justify-between gap-3">
+                    <div class="min-w-0">
+                        <div class="font-semibold text-gray-900 truncate">{{ $c->requester_name }}</div>
+                        <div class="mt-0.5 text-xs text-gray-500 truncate">{{ $c->topic }}</div>
+                    </div>
+                    <span class="shrink-0 inline-flex px-2 py-1 rounded-full text-xs {{ $statusClass }}">{{ $statusLabel }}</span>
+                </div>
+                <div class="mt-3 text-xs">
+                    <div class="text-gray-500">Jadwal</div>
+                    <div class="font-medium text-gray-900">{{ optional($c->scheduled_at)->format('Y-m-d H:i') ?: '—' }}</div>
+                </div>
+                <div class="mt-4 grid grid-cols-2 gap-2">
+                    <x-button class="w-full" variant="secondary" wire:click="edit({{ $c->id }})">Ubah</x-button>
+                    <x-button class="w-full" variant="danger" wire:click="confirmDelete({{ $c->id }})">Hapus</x-button>
+                </div>
+            </div>
+        @empty
+            <div class="rounded-2xl border border-gray-200 bg-white px-4 py-8 text-center text-sm text-gray-500 shadow-sm">Belum ada data konsultasi.</div>
+        @endforelse
+    </div>
+
+    <x-table class="hidden sm:block">
         <x-slot:head>
             <tr>
                 <th class="px-4 py-3 text-left text-xs text-gray-500 uppercase">Pemohon</th>

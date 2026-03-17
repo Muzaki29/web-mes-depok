@@ -16,7 +16,48 @@
         <x-button wire:click="create">Tambah Dokumen</x-button>
     </div>
 
-    <x-table>
+    <div class="sm:hidden space-y-3">
+        @forelse($paginator as $doc)
+            @php
+                $visLabel = match ($doc->visibility) {
+                    'public' => 'Publik',
+                    'member' => 'Anggota',
+                    'role' => 'Role',
+                    'private' => 'Privat',
+                    default => $doc->visibility,
+                };
+                $visText = $visLabel.($doc->visibility === 'role' && $doc->role ? ' ('.$doc->role.')' : '');
+            @endphp
+            <div class="rounded-2xl border border-gray-200 bg-white p-4 shadow-sm">
+                <div class="flex items-start justify-between gap-3">
+                    <div class="min-w-0">
+                        <div class="font-semibold text-gray-900 truncate">{{ $doc->title }}</div>
+                        <div class="mt-0.5 text-xs text-gray-500 truncate">{{ $doc->category->name ?? 'Tanpa Kategori' }}</div>
+                    </div>
+                    <span class="shrink-0 inline-flex px-2 py-1 rounded-full text-xs bg-amber-50 text-amber-800">{{ $visText }}</span>
+                </div>
+
+                <div class="mt-3 grid grid-cols-2 gap-3 text-xs">
+                    <div>
+                        <div class="text-gray-500">Ukuran</div>
+                        <div class="font-medium text-gray-900">{{ $doc->size ? number_format($doc->size / 1024 / 1024, 2).' MB' : '—' }}</div>
+                    </div>
+                    <div class="text-right">
+                        <a href="{{ url('/documents/'.$doc->slug.'/download') }}" class="inline-flex items-center text-sm font-medium text-emerald-700 hover:underline">Unduh</a>
+                    </div>
+                </div>
+
+                <div class="mt-4 grid grid-cols-2 gap-2">
+                    <x-button class="w-full" variant="secondary" wire:click="edit({{ $doc->id }})">Ubah</x-button>
+                    <x-button class="w-full" variant="danger" wire:click="confirmDelete({{ $doc->id }})">Hapus</x-button>
+                </div>
+            </div>
+        @empty
+            <div class="rounded-2xl border border-gray-200 bg-white px-4 py-8 text-center text-sm text-gray-500 shadow-sm">Tidak ada dokumen.</div>
+        @endforelse
+    </div>
+
+    <x-table class="hidden sm:block">
         <x-slot:head>
             <tr>
                 <th class="px-4 py-3 text-left text-xs text-gray-500 uppercase">Judul</th>

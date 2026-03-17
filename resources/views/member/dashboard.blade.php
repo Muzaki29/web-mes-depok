@@ -71,7 +71,23 @@
 <div class="mt-6 grid grid-cols-1 lg:grid-cols-2 gap-6">
     <x-card>
         <x-slot:title>My Registered Events</x-slot:title>
-        <x-table class="mt-3">
+        <div class="sm:hidden mt-3 space-y-3">
+            @foreach([['Ethical Finance Workshop','Mar 15, 09:00 AM','Confirmed'],['Annual Economic Summit','Apr 22, Full Day','Pending']] as $e)
+                <div class="rounded-2xl border border-gray-200 bg-white p-4 shadow-sm">
+                    <div class="flex items-start justify-between gap-3">
+                        <div class="min-w-0">
+                            <div class="font-semibold text-gray-900 truncate">{{ $e[0] }}</div>
+                            <div class="mt-0.5 text-xs text-gray-500">{{ $e[1] }}</div>
+                        </div>
+                        <span class="shrink-0 inline-flex px-2 py-1 rounded-full text-xs bg-gray-100 text-gray-700">{{ $e[2] }}</span>
+                    </div>
+                    <div class="mt-4">
+                        <x-button class="w-full" variant="secondary">View</x-button>
+                    </div>
+                </div>
+            @endforeach
+        </div>
+        <x-table class="hidden sm:block mt-3">
             <x-slot:head>
                 <tr>
                     <th class="px-4 py-3 text-left text-xs text-gray-500 uppercase">Event</th>
@@ -109,7 +125,23 @@
 <div class="mt-6">
     <x-card>
         <x-slot:title>Consultation Requests</x-slot:title>
-        <x-table class="mt-2">
+        <div class="sm:hidden mt-2 space-y-3">
+            @foreach([['Ethical Finance','Scheduled','Mar 20, 10:00 AM'],['SME Support','Submitted','—']] as $r)
+                <div class="rounded-2xl border border-gray-200 bg-white p-4 shadow-sm">
+                    <div class="flex items-start justify-between gap-3">
+                        <div class="min-w-0">
+                            <div class="font-semibold text-gray-900 truncate">{{ $r[0] }}</div>
+                            <div class="mt-0.5 text-xs text-gray-500">{{ $r[2] }}</div>
+                        </div>
+                        <span class="shrink-0 inline-flex px-2 py-1 rounded-full text-xs bg-gray-100 text-gray-700">{{ $r[1] }}</span>
+                    </div>
+                    <div class="mt-4">
+                        <x-button class="w-full" variant="secondary">View</x-button>
+                    </div>
+                </div>
+            @endforeach
+        </div>
+        <x-table class="hidden sm:block mt-2">
             <x-slot:head>
                 <tr>
                     <th class="px-4 py-3 text-left text-xs text-gray-500 uppercase">Topic</th>

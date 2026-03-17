@@ -9,7 +9,40 @@
         <x-button wire:click="create">Buat Agenda</x-button>
     </div>
 
-    <x-table>
+    <div class="sm:hidden space-y-3">
+        @forelse($paginator as $e)
+            <div class="rounded-2xl border border-gray-200 bg-white p-4 shadow-sm">
+                <div class="flex items-start justify-between gap-3">
+                    <div class="min-w-0">
+                        <div class="font-semibold text-gray-900 truncate">{{ $e->title }}</div>
+                        <div class="mt-0.5 text-xs text-gray-500">{{ optional($e->start_at)->format('Y-m-d H:i') ?: '—' }}</div>
+                    </div>
+                    <span class="shrink-0 inline-flex px-2 py-1 rounded-full text-xs {{ $e->is_public ? 'bg-emerald-50 text-emerald-700' : 'bg-gray-100 text-gray-700' }}">{{ $e->is_public ? 'Publik' : 'Internal' }}</span>
+                </div>
+
+                <div class="mt-3 grid grid-cols-2 gap-3 text-xs">
+                    <div>
+                        <div class="text-gray-500">Lokasi</div>
+                        <div class="font-medium text-gray-900 truncate">{{ $e->location ?: '—' }}</div>
+                    </div>
+                    <div>
+                        <div class="text-gray-500">Kuota</div>
+                        <div class="font-medium text-gray-900">{{ $e->capacity ?: '—' }}</div>
+                    </div>
+                </div>
+
+                <div class="mt-4 grid grid-cols-2 gap-2">
+                    <x-button class="w-full" variant="secondary" wire:click="openParticipants({{ $e->id }})">Peserta</x-button>
+                    <x-button class="w-full" variant="secondary" wire:click="edit({{ $e->id }})">Ubah</x-button>
+                    <x-button class="w-full col-span-2" variant="danger" wire:click="confirmDelete({{ $e->id }})">Hapus</x-button>
+                </div>
+            </div>
+        @empty
+            <div class="rounded-2xl border border-gray-200 bg-white px-4 py-8 text-center text-sm text-gray-500 shadow-sm">Belum ada agenda.</div>
+        @endforelse
+    </div>
+
+    <x-table class="hidden sm:block">
         <x-slot:head>
             <tr>
                 <th class="px-4 py-3 text-left text-xs text-gray-500 uppercase">Judul</th>
