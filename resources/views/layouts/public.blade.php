@@ -27,7 +27,6 @@
         </script>
         <script src="https://cdn.tailwindcss.com"></script>
     @endif
-    <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
     <style>
         .reveal{opacity:0;transform:translateY(12px);transition:all .6s cubic-bezier(.2,.8,.2,1)}
         .reveal-visible{opacity:1;transform:translateY(0)}
@@ -197,10 +196,10 @@
                 <div>
                     <p class="text-sm font-semibold text-white">Layanan</p>
                     <ul class="mt-3 space-y-2 text-sm">
-                        <li><a class="hover:text-white" href="#">Konsultasi</a></li>
-                        <li><a class="hover:text-white" href="#">Sertifikasi</a></li>
-                        <li><a class="hover:text-white" href="#">Pelatihan</a></li>
-                        <li><a class="hover:text-white" href="#">Sumber Daya</a></li>
+                        <li><a class="hover:text-white" href="{{ route('contact') }}">Konsultasi</a></li>
+                        <li><a class="hover:text-white" href="{{ route('programs') }}">Sertifikasi</a></li>
+                        <li><a class="hover:text-white" href="{{ route('programs') }}">Pelatihan</a></li>
+                        <li><a class="hover:text-white" href="{{ route('news') }}">Sumber Daya</a></li>
                     </ul>
                 </div>
                 <div>
@@ -215,8 +214,8 @@
             <div class="mt-8 border-t border-gray-800 pt-6 flex items-center justify-between text-sm">
                 <p class="text-gray-400">© {{ date('Y') }} MES Depok. Hak cipta dilindungi.</p>
                 <div class="flex items-center gap-6">
-                    <a href="#" class="hover:text-white">Kebijakan Privasi</a>
-                    <a href="#" class="hover:text-white">Syarat & Ketentuan</a>
+                    <a href="{{ route('about') }}" class="hover:text-white">Kebijakan Privasi</a>
+                    <a href="{{ route('about.statute') }}" class="hover:text-white">Syarat & Ketentuan</a>
                 </div>
             </div>
         </div>

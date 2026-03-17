@@ -19,36 +19,36 @@
         @foreach($paginator as $p)
         <tr>
             <td class="px-4 py-3">
-                @if(!empty($p['logo']))
-                    <img class="h-10 w-10 rounded-lg object-cover ring-1 ring-gray-200" src="{{ asset('storage/'.$p['logo']) }}" alt="{{ $p['name'] }}">
+                @if(!empty($p->logo))
+                    <img class="h-10 w-10 rounded-lg object-cover ring-1 ring-gray-200" src="{{ asset('storage/'.$p->logo) }}" alt="{{ $p->name }}">
                 @else
                     <div class="h-10 w-10 rounded-lg bg-gray-100 ring-1 ring-gray-200"></div>
                 @endif
             </td>
-            <td class="px-4 py-3">{{ $p['name'] }}</td>
+            <td class="px-4 py-3">{{ $p->name }}</td>
             <td class="px-4 py-3">
                 @php
-                    $typeLabel = match ($p['type']) {
+                    $typeLabel = match ($p->type) {
                         'company' => 'Perusahaan',
                         'ngo' => 'NGO',
                         'gov' => 'Pemerintah',
                         'edu' => 'Pendidikan',
                         'other' => 'Lainnya',
-                        default => $p['type'],
+                        default => $p->type,
                     };
                 @endphp
                 <span class="capitalize">{{ $typeLabel }}</span>
             </td>
             <td class="px-4 py-3">
-                @if(!empty($p['website']))
-                    <a href="{{ $p['website'] }}" target="_blank" rel="noopener noreferrer" class="text-emerald-700 hover:underline">{{ $p['website'] }}</a>
+                @if(!empty($p->website))
+                    <a href="{{ $p->website }}" target="_blank" rel="noopener noreferrer" class="text-emerald-700 hover:underline">{{ $p->website }}</a>
                 @else
                     <span class="text-gray-400">—</span>
                 @endif
             </td>
             <td class="px-4 py-3 text-right">
-                <x-button size="sm" variant="secondary" wire:click="edit({{ $p['id'] }})">Ubah</x-button>
-                <x-button size="sm" variant="danger" wire:click="confirmDelete({{ $p['id'] }})">Hapus</x-button>
+                <x-button size="sm" variant="secondary" wire:click="edit({{ $p->id }})">Ubah</x-button>
+                <x-button size="sm" variant="danger" wire:click="confirmDelete({{ $p->id }})">Hapus</x-button>
             </td>
         </tr>
         @endforeach

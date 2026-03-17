@@ -16,7 +16,9 @@ use App\Models\Member;
 use App\Models\Partner as PartnerModel;
 use App\Models\SiteSetting;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Schema;
 
@@ -336,7 +338,7 @@ Route::prefix('member')->middleware(['auth', 'role:member,super_admin,org_admin'
     Route::view('/dashboard', 'member.dashboard')->name('member.dashboard');
     Route::view('/card', 'member.card')->name('member.card');
     Route::get('/profile', function () {
-        $user = auth()->user();
+        $user = Auth::user();
         $member = Member::query()->with('category')->where('user_id', $user->id)->first();
 
         return view('member.profile', compact('user', 'member'));
@@ -346,13 +348,17 @@ Route::prefix('member')->middleware(['auth', 'role:member,super_admin,org_admin'
         $validated = $request->validate([
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'email', 'max:255', 'unique:users,email,'.$user->id],
+            'phone' => ['nullable', 'string', 'max:30'],
+            'organization' => ['nullable', 'string', 'max:255'],
             'password' => ['nullable', 'string', 'min:8', 'confirmed'],
         ]);
 
         $user->name = $validated['name'];
         $user->email = $validated['email'];
+        $user->phone = $validated['phone'] ?? null;
+        $user->organization = $validated['organization'] ?? null;
         if (($validated['password'] ?? '') !== '') {
-            $user->password = $validated['password'];
+            $user->password = Hash::make($validated['password']);
         }
         $user->save();
 

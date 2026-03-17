@@ -8,9 +8,12 @@ use App\Services\LetterNumberingService;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Livewire\Attributes\On;
 use Livewire\Component;
+use Livewire\WithPagination;
 
 class LettersManager extends Component
 {
+    use WithPagination;
+
     public string $search = '';
 
     public int $perPage = 10;
@@ -18,6 +21,8 @@ class LettersManager extends Component
     public $letters;
 
     public bool $showCreate = false;
+
+    public bool $showEdit = false;
 
     public bool $showDelete = false;
 
@@ -33,6 +38,16 @@ class LettersManager extends Component
     public function mount(): void
     {
         //
+    }
+
+    public function updatedSearch(): void
+    {
+        $this->resetPage();
+    }
+
+    public function updatedPerPage(): void
+    {
+        $this->resetPage();
     }
 
     #[On('openCreateLetter')]
@@ -59,8 +74,17 @@ class LettersManager extends Component
         return $this->query()->paginate($this->perPage);
     }
 
+    protected function closeModals(): void
+    {
+        $this->showCreate = false;
+        $this->showEdit = false;
+        $this->showDelete = false;
+    }
+
     public function create(): void
     {
+        $this->closeModals();
+        $this->editingId = null;
         $this->form = ['number' => '', 'subject' => '', 'direction' => 'outgoing', 'template_id' => optional(LetterTemplate::first())->id];
         $this->showCreate = true;
     }
@@ -83,8 +107,41 @@ class LettersManager extends Component
         $this->showCreate = false;
     }
 
+    public function edit(int $id): void
+    {
+        $row = Letter::findOrFail($id);
+        $this->closeModals();
+        $this->editingId = $id;
+        $this->form = [
+            'number' => $row->number ?? '',
+            'subject' => $row->subject ?? '',
+            'direction' => $row->direction ?? 'outgoing',
+            'template_id' => $row->template_id,
+        ];
+        $this->showEdit = true;
+    }
+
+    public function update(): void
+    {
+        $data = $this->validate([
+            'form.subject' => 'required|string|max:255',
+            'form.direction' => 'required|in:incoming,outgoing',
+            'form.template_id' => 'nullable|exists:letter_templates,id',
+            'form.number' => 'nullable|string|max:255',
+        ])['form'];
+
+        if (empty($data['number']) && $data['direction'] === 'outgoing' && $data['template_id']) {
+            $template = LetterTemplate::find($data['template_id']);
+            $data['number'] = app(LetterNumberingService::class)->issueNumber($template);
+        }
+
+        Letter::whereKey($this->editingId)->update($data);
+        $this->showEdit = false;
+    }
+
     public function confirmDelete(int $id): void
     {
+        $this->closeModals();
         $this->editingId = $id;
         $this->showDelete = true;
     }

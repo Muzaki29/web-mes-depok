@@ -15,7 +15,6 @@
         </script>
         <script src="https://cdn.tailwindcss.com/4.0.0"></script>
     @endif
-    <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
     @livewireStyles
 </head>
 <body class="font-sans antialiased bg-gray-50 text-gray-900">
@@ -87,12 +86,13 @@
                         <div x-data="{open:false}" class="relative">
                             <button @click="open=!open" class="flex items-center gap-3 focus:outline-none">
                                 @php
-                                    $avatar = auth()->check() && auth()->user()->avatar
-                                        ? \Illuminate\Support\Facades\Storage::disk('public')->url(auth()->user()->avatar)
-                                        : 'https://ui-avatars.com/api/?name='.urlencode(Auth::user()->name ?? 'Guest').'&background=16a34a&color=fff';
+                                    $user = auth()->user();
+                                    $avatar = $user && $user->avatar
+                                        ? \Illuminate\Support\Facades\Storage::disk('public')->url($user->avatar)
+                                        : 'https://ui-avatars.com/api/?name='.urlencode($user?->name ?? 'Guest').'&background=16a34a&color=fff';
                                 @endphp
                                 <img class="h-9 w-9 rounded-full ring-2 ring-emerald-100 object-cover" src="{{ $avatar }}" alt="user">
-                                <span class="hidden sm:block text-sm font-medium">{{ Auth::user()->name ?? 'Guest' }}</span>
+                                <span class="hidden sm:block text-sm font-medium">{{ auth()->user()?->name ?? 'Guest' }}</span>
                                 <svg class="h-4 w-4 text-gray-500 sm:block hidden" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M19 9l-7 7-7-7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
                             </button>
                             <div x-cloak x-show="open" @click.outside="open=false"
@@ -182,13 +182,13 @@
                                         'icon' => '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M9 3h6a2 2 0 012 2v2H7V5a2 2 0 012-2z" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M7 7h10v14a2 2 0 01-2 2H9a2 2 0 01-2-2V7z" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M9 13l2 2 4-4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>',
                                     ],
                                     'broadcast' => [
-                                        'label' => 'Broadcast',
+                                        'label' => 'Kirim Notifikasi',
                                         'href' => url('/admin/broadcast'),
                                         'active' => request()->is('admin/broadcast*'),
                                         'icon' => '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M4 11a8 8 0 0116 0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M7 11a5 5 0 0110 0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M12 14a2 2 0 00-2 2v4h4v-4a2 2 0 00-2-2z" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>',
                                     ],
                                     'notifications' => [
-                                        'label' => 'Notifikasi',
+                                        'label' => 'Notifikasi Masuk',
                                         'href' => url('/admin/notifications'),
                                         'active' => request()->is('admin/notifications*'),
                                         'icon' => '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6 6 0 10-12 0v3.159c0 .538-.214 1.055-.595 1.436L4 17h5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M13.73 21a2 2 0 01-3.46 0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>',
@@ -273,7 +273,7 @@
                         <p class="text-sm font-semibold text-white">Tautan Cepat</p>
                         <ul class="mt-3 space-y-2 text-sm">
                             <li><a class="hover:text-white" href="{{ url('/about') }}">Tentang Kami</a></li>
-                            <li><a class="hover:text-white" href="{{ route('member.dashboard') }}">Keanggotaan</a></li>
+                            <li><a class="hover:text-white" href="{{ route('membership') }}">Keanggotaan</a></li>
                             <li><a class="hover:text-white" href="{{ url('/events') }}">Agenda</a></li>
                             <li><a class="hover:text-white" href="{{ url('/news') }}">Berita</a></li>
                         </ul>
@@ -281,10 +281,10 @@
                     <div>
                         <p class="text-sm font-semibold text-white">Layanan</p>
                         <ul class="mt-3 space-y-2 text-sm">
-                            <li><a class="hover:text-white" href="#">Konsultasi</a></li>
-                            <li><a class="hover:text-white" href="#">Sertifikasi</a></li>
-                            <li><a class="hover:text-white" href="#">Pelatihan</a></li>
-                            <li><a class="hover:text-white" href="#">Sumber Daya</a></li>
+                            <li><a class="hover:text-white" href="{{ route('contact') }}">Konsultasi</a></li>
+                            <li><a class="hover:text-white" href="{{ route('programs') }}">Sertifikasi</a></li>
+                            <li><a class="hover:text-white" href="{{ route('programs') }}">Pelatihan</a></li>
+                            <li><a class="hover:text-white" href="{{ route('news') }}">Sumber Daya</a></li>
                         </ul>
                     </div>
                     <div>
@@ -300,8 +300,8 @@
                 <div class="mt-8 border-t border-gray-800 pt-6 flex items-center justify-between text-sm">
                     <p class="text-gray-400">© {{ date('Y') }} EconoComm. Hak cipta dilindungi.</p>
                     <div class="flex items-center gap-6">
-                        <a href="#" class="hover:text-white">Kebijakan Privasi</a>
-                        <a href="#" class="hover:text-white">Syarat & Ketentuan</a>
+                        <a href="{{ route('about') }}" class="hover:text-white">Kebijakan Privasi</a>
+                        <a href="{{ route('about.statute') }}" class="hover:text-white">Syarat & Ketentuan</a>
                     </div>
                 </div>
             </div>

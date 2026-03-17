@@ -38,6 +38,13 @@ class DocumentsManager extends Component
 
     public $fileUpload;
 
+    private function closeModals(): void
+    {
+        $this->showCreate = false;
+        $this->showEdit = false;
+        $this->showDelete = false;
+    }
+
     public function updatedSearch(): void
     {
         $this->resetPage();
@@ -68,6 +75,7 @@ class DocumentsManager extends Component
 
     public function create(): void
     {
+        $this->closeModals();
         $this->editingId = null;
         $this->form = [
             'title' => '',
@@ -123,6 +131,7 @@ class DocumentsManager extends Component
 
     public function edit(int $id): void
     {
+        $this->closeModals();
         $doc = Document::with('category')->findOrFail($id);
         $this->editingId = $id;
         $this->form = [
@@ -182,6 +191,7 @@ class DocumentsManager extends Component
 
     public function confirmDelete(int $id): void
     {
+        $this->closeModals();
         $this->editingId = $id;
         $this->showDelete = true;
     }

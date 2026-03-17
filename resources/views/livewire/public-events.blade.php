@@ -24,7 +24,7 @@
                             </select>
                         </div>
                         <div>
-                            <button class="w-full px-4 py-3 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white font-semibold transition">
+                            <button type="button" x-data @click="document.getElementById('upcoming')?.scrollIntoView({ behavior: 'smooth' })" class="w-full px-4 py-3 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white font-semibold transition">
                                 Cari Event
                             </button>
                         </div>
@@ -256,7 +256,7 @@
                         <div class="text-xs text-gray-500 mb-1">{{ $event->start_at->format('d M Y') }}</div>
                         <h3 class="font-bold text-gray-900 line-clamp-2 text-sm">{{ $event->title }}</h3>
                     </div>
-                    <a href="#" class="text-xs font-semibold text-emerald-600 mt-2 hover:underline">Lihat Dokumentasi</a>
+                    <a href="{{ route('events.show', $event->slug) }}" class="text-xs font-semibold text-emerald-600 mt-2 hover:underline">Lihat Dokumentasi</a>
                 </div>
             </div>
             @endforeach

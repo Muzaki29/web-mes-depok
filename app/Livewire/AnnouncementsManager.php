@@ -5,9 +5,12 @@ namespace App\Livewire;
 use App\Models\Announcement;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Livewire\Component;
+use Livewire\WithPagination;
 
 class AnnouncementsManager extends Component
 {
+    use WithPagination;
+
     public string $search = '';
 
     public int $perPage = 10;
@@ -32,6 +35,16 @@ class AnnouncementsManager extends Component
         $this->showCreate = false;
         $this->showEdit = false;
         $this->showDelete = false;
+    }
+
+    public function updatedSearch(): void
+    {
+        $this->resetPage();
+    }
+
+    public function updatedPerPage(): void
+    {
+        $this->resetPage();
     }
 
     public function paginator(): LengthAwarePaginator

@@ -36,6 +36,14 @@
                 <input name="email" type="email" class="mt-1 w-full rounded-md border-gray-300" value="{{ old('email', $user->email) }}" />
             </div>
             <div>
+                <label class="text-sm text-gray-600">No. HP</label>
+                <input name="phone" class="mt-1 w-full rounded-md border-gray-300" value="{{ old('phone', $user->phone) }}" />
+            </div>
+            <div>
+                <label class="text-sm text-gray-600">Organisasi</label>
+                <input name="organization" class="mt-1 w-full rounded-md border-gray-300" value="{{ old('organization', $user->organization) }}" />
+            </div>
+            <div>
                 <label class="text-sm text-gray-600">Password Baru</label>
                 <input name="password" type="password" class="mt-1 w-full rounded-md border-gray-300" autocomplete="new-password" />
                 <p class="mt-1 text-xs text-gray-500">Kosongkan jika tidak ingin mengubah password.</p>
@@ -77,4 +85,3 @@
     </x-card>
 </div>
 @endsection
-

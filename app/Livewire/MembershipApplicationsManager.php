@@ -9,9 +9,12 @@ use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Str;
 use Livewire\Component;
+use Livewire\WithPagination;
 
 class MembershipApplicationsManager extends Component
 {
+    use WithPagination;
+
     public string $search = '';
 
     public string $status = 'all';
@@ -24,6 +27,21 @@ class MembershipApplicationsManager extends Component
 
     public array $form = ['notes' => ''];
 
+    public function updatedSearch(): void
+    {
+        $this->resetPage();
+    }
+
+    public function updatedStatus(): void
+    {
+        $this->resetPage();
+    }
+
+    public function updatedPerPage(): void
+    {
+        $this->resetPage();
+    }
+
     public function paginator(): LengthAwarePaginator
     {
         return MembershipApplication::query()
@@ -35,6 +53,7 @@ class MembershipApplicationsManager extends Component
 
     public function review(int $id): void
     {
+        $this->showReview = false;
         $this->reviewId = $id;
         $this->showReview = true;
     }

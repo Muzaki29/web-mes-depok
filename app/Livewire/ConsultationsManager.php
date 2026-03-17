@@ -32,6 +32,13 @@ class ConsultationsManager extends Component
         'scheduled_at' => '',
     ];
 
+    private function closeModals(): void
+    {
+        $this->showCreate = false;
+        $this->showEdit = false;
+        $this->showDelete = false;
+    }
+
     public function updatedSearch(): void
     {
         $this->resetPage();
@@ -71,6 +78,7 @@ class ConsultationsManager extends Component
 
     public function create(): void
     {
+        $this->closeModals();
         $this->editingId = null;
         $this->form = [
             'requester_name' => '',
@@ -105,6 +113,7 @@ class ConsultationsManager extends Component
 
     public function edit(int $id): void
     {
+        $this->closeModals();
         $this->editingId = $id;
         $row = Consultation::find($id);
         if (! $row) {
@@ -144,6 +153,7 @@ class ConsultationsManager extends Component
 
     public function confirmDelete(int $id): void
     {
+        $this->closeModals();
         $this->editingId = $id;
         $this->showDelete = true;
     }

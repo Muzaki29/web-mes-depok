@@ -69,7 +69,7 @@
                 </div>
 
                 <div class="text-sm">
-                    <a href="#" class="font-medium text-emerald-600 hover:text-emerald-500">Lupa password?</a>
+                    <a href="{{ route('contact') }}" class="font-medium text-emerald-600 hover:text-emerald-500">Lupa password?</a>
                 </div>
             </div>
 

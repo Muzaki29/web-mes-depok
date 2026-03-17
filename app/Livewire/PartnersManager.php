@@ -3,15 +3,15 @@
 namespace App\Livewire;
 
 use App\Models\Partner;
-use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Storage;
 use Livewire\Attributes\On;
 use Livewire\Component;
 use Livewire\WithFileUploads;
+use Livewire\WithPagination;
 
 class PartnersManager extends Component
 {
-    use WithFileUploads;
+    use WithFileUploads, WithPagination;
 
     public string $search = '';
 
@@ -38,15 +38,32 @@ class PartnersManager extends Component
 
     public function mount(): void {}
 
+    private function closeModals(): void
+    {
+        $this->showCreate = false;
+        $this->showEdit = false;
+        $this->showDelete = false;
+    }
+
+    public function updatedSearch(): void
+    {
+        $this->resetPage();
+    }
+
+    public function updatedPerPage(): void
+    {
+        $this->resetPage();
+    }
+
     #[On('openCreatePartner')]
     public function openCreatePartner(): void
     {
         $this->create();
     }
 
-    protected function filtered(): array
+    public function getQuery()
     {
-        $query = Partner::query()
+        return Partner::query()
             ->when($this->search !== '', function ($q) {
                 $s = '%'.$this->search.'%';
                 $q->where(function ($sub) use ($s) {
@@ -56,21 +73,12 @@ class PartnersManager extends Component
                 });
             })
             ->orderBy('name');
-
-        return $query->get()->toArray();
-    }
-
-    public function paginator(): LengthAwarePaginator
-    {
-        $data = $this->filtered();
-        $page = request()->input('page', 1);
-        $items = array_slice($data, ($page - 1) * $this->perPage, $this->perPage);
-
-        return new LengthAwarePaginator($items, count($data), $this->perPage, $page, ['path' => request()->url(), 'query' => request()->query()]);
     }
 
     public function create(): void
     {
+        $this->closeModals();
+        $this->editingId = null;
         $this->form = ['name' => '', 'type' => 'company', 'website' => '', 'logo' => null];
         $this->reset('logoUpload');
         $this->showCreate = true;
@@ -94,6 +102,7 @@ class PartnersManager extends Component
 
     public function edit(int $id): void
     {
+        $this->closeModals();
         $this->editingId = $id;
         $row = Partner::findOrFail($id);
         $this->form = ['name' => $row->name, 'type' => $row->type, 'website' => $row->website, 'logo' => $row->logo];
@@ -124,6 +133,7 @@ class PartnersManager extends Component
 
     public function confirmDelete(int $id): void
     {
+        $this->closeModals();
         $this->editingId = $id;
         $this->showDelete = true;
     }
@@ -142,6 +152,8 @@ class PartnersManager extends Component
 
     public function render()
     {
-        return view('livewire.partners-manager', ['paginator' => $this->paginator()]);
+        return view('livewire.partners-manager', [
+            'paginator' => $this->getQuery()->paginate($this->perPage),
+        ]);
     }
 }

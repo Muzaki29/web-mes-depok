@@ -8,10 +8,11 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use Livewire\Component;
 use Livewire\WithFileUploads;
+use Livewire\WithPagination;
 
 class ArticlesManager extends Component
 {
-    use WithFileUploads;
+    use WithFileUploads, WithPagination;
 
     public string $search = '';
 
@@ -35,6 +36,23 @@ class ArticlesManager extends Component
 
     public $thumbnailUpload;
 
+    private function closeModals(): void
+    {
+        $this->showCreate = false;
+        $this->showEdit = false;
+        $this->showDelete = false;
+    }
+
+    public function updatedSearch(): void
+    {
+        $this->resetPage();
+    }
+
+    public function updatedPerPage(): void
+    {
+        $this->resetPage();
+    }
+
     public function paginator(): LengthAwarePaginator
     {
         return Article::query()
@@ -45,7 +63,9 @@ class ArticlesManager extends Component
 
     public function create(): void
     {
+        $this->closeModals();
         $this->form = ['title' => '', 'excerpt' => '', 'body' => '', 'status' => 'draft', 'published_at' => ''];
+        $this->reset('thumbnailUpload');
         $this->showCreate = true;
     }
 
@@ -71,14 +91,17 @@ class ArticlesManager extends Component
                 if (function_exists('imagewebp')) {
                     $raw = Storage::disk('public')->get($path);
                     $img = @imagecreatefromstring($raw);
-                    if ($img) {
+                    if ($img !== false) {
                         $webpPath = preg_replace('/\\.[^.]+$/', '.webp', $path);
-                        imagewebp($img, Storage::disk('public')->path($webpPath), 80);
-                        imagedestroy($img);
-                        $stored = $webpPath;
+                        $ok = imagewebp($img, Storage::disk('public')->path($webpPath), 80);
+                        unset($img);
+                        if ($ok) {
+                            Storage::disk('public')->delete($path);
+                            $stored = $webpPath;
+                        }
                     }
                 }
-            } catch (\Throwable $e) {
+            } catch (\Throwable) {
             }
             $data['thumbnail'] = $stored;
         }
@@ -89,6 +112,7 @@ class ArticlesManager extends Component
 
     public function edit(int $id): void
     {
+        $this->closeModals();
         $row = Article::findOrFail($id);
         $this->editingId = $id;
         $this->form = [
@@ -122,14 +146,17 @@ class ArticlesManager extends Component
                 if (function_exists('imagewebp')) {
                     $raw = Storage::disk('public')->get($path);
                     $img = @imagecreatefromstring($raw);
-                    if ($img) {
+                    if ($img !== false) {
                         $webpPath = preg_replace('/\\.[^.]+$/', '.webp', $path);
-                        imagewebp($img, Storage::disk('public')->path($webpPath), 80);
-                        imagedestroy($img);
-                        $stored = $webpPath;
+                        $ok = imagewebp($img, Storage::disk('public')->path($webpPath), 80);
+                        unset($img);
+                        if ($ok) {
+                            Storage::disk('public')->delete($path);
+                            $stored = $webpPath;
+                        }
                     }
                 }
-            } catch (\Throwable $e) {
+            } catch (\Throwable) {
             }
             $data['thumbnail'] = $stored;
         }
@@ -140,6 +167,7 @@ class ArticlesManager extends Component
 
     public function confirmDelete(int $id): void
     {
+        $this->closeModals();
         $this->editingId = $id;
         $this->showDelete = true;
     }

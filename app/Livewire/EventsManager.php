@@ -5,27 +5,39 @@ namespace App\Livewire;
 use App\Models\Attendance;
 use App\Models\Event;
 use App\Models\EventRegistration;
-use Illuminate\Pagination\LengthAwarePaginator;
 use Livewire\Attributes\On;
 use Livewire\Component;
+use Livewire\WithPagination;
 
 class EventsManager extends Component
 {
+    use WithPagination;
+
     public string $search = '';
 
     public int $perPage = 10;
 
-    public array $events = [];
-
-    public array $participants = [];
-
     public bool $showCreate = false;
+
+    public bool $showEdit = false;
+
+    public bool $showDelete = false;
+
+    public bool $showParticipants = false;
+
+    public ?int $editingId = null;
+
+    public ?int $participantsEventId = null;
 
     public array $form = [
         'title' => '',
-        'date' => '',
+        'start_at' => '',
+        'end_at' => '',
+        'category' => '',
+        'description' => '',
         'location' => '',
         'capacity' => 50,
+        'is_public' => true,
     ];
 
     public function mount(): void {}
@@ -36,29 +48,39 @@ class EventsManager extends Component
         $this->create();
     }
 
-    public function getFiltered(): array
+    public function updatedSearch(): void
     {
-        $q = Event::query()
-            ->when($this->search !== '', fn ($query) => $query->where('title', 'like', '%'.$this->search.'%'))
-            ->orderByDesc('start_at');
-
-        return $q->get()->map(fn ($e) => [
-            'id' => $e->id, 'title' => $e->title, 'date' => optional($e->start_at)->format('Y-m-d'), 'location' => $e->location, 'capacity' => $e->capacity,
-        ])->toArray();
+        $this->resetPage();
     }
 
-    public function paginator(): LengthAwarePaginator
+    public function updatedPerPage(): void
     {
-        $data = $this->getFiltered();
-        $page = request()->input('page', 1);
-        $items = array_slice($data, ($page - 1) * $this->perPage, $this->perPage);
+        $this->resetPage();
+    }
 
-        return new LengthAwarePaginator($items, count($data), $this->perPage, $page, ['path' => request()->url(), 'query' => request()->query()]);
+    protected function closeModals(): void
+    {
+        $this->showCreate = false;
+        $this->showEdit = false;
+        $this->showDelete = false;
+        $this->showParticipants = false;
     }
 
     public function create(): void
     {
-        $this->form = ['title' => '', 'date' => date('Y-m-d', strtotime('+1 week')), 'location' => '', 'capacity' => 50];
+        $this->closeModals();
+        $this->editingId = null;
+        $this->participantsEventId = null;
+        $this->form = [
+            'title' => '',
+            'start_at' => now()->addWeek()->format('Y-m-d\TH:i'),
+            'end_at' => '',
+            'category' => '',
+            'description' => '',
+            'location' => '',
+            'capacity' => 50,
+            'is_public' => true,
+        ];
         $this->showCreate = true;
     }
 
@@ -66,23 +88,107 @@ class EventsManager extends Component
     {
         $data = $this->validate([
             'form.title' => 'required|string|max:255',
-            'form.date' => 'required|date',
+            'form.start_at' => 'required|date',
+            'form.end_at' => 'nullable|date|after_or_equal:form.start_at',
+            'form.category' => 'nullable|string|max:255',
+            'form.description' => 'nullable|string',
             'form.location' => 'nullable|string|max:255',
             'form.capacity' => 'nullable|integer|min:1',
+            'form.is_public' => 'boolean',
         ])['form'];
+
+        if (($data['end_at'] ?? '') === '') {
+            $data['end_at'] = null;
+        }
+
         Event::create([
             'title' => $data['title'],
-            'start_at' => $data['date'],
+            'start_at' => $data['start_at'],
+            'end_at' => $data['end_at'],
+            'category' => $data['category'],
+            'description' => $data['description'],
             'location' => $data['location'],
             'capacity' => $data['capacity'],
+            'is_public' => (bool) ($data['is_public'] ?? true),
         ]);
         $this->showCreate = false;
     }
 
+    public function edit(int $id): void
+    {
+        $row = Event::findOrFail($id);
+        $this->closeModals();
+        $this->editingId = $id;
+        $this->participantsEventId = null;
+        $this->form = [
+            'title' => $row->title,
+            'start_at' => optional($row->start_at)->format('Y-m-d\TH:i') ?? '',
+            'end_at' => optional($row->end_at)->format('Y-m-d\TH:i') ?? '',
+            'category' => $row->category ?? '',
+            'description' => $row->description ?? '',
+            'location' => $row->location ?? '',
+            'capacity' => $row->capacity ?? 50,
+            'is_public' => (bool) $row->is_public,
+        ];
+        $this->showEdit = true;
+    }
+
+    public function update(): void
+    {
+        $data = $this->validate([
+            'form.title' => 'required|string|max:255',
+            'form.start_at' => 'required|date',
+            'form.end_at' => 'nullable|date|after_or_equal:form.start_at',
+            'form.category' => 'nullable|string|max:255',
+            'form.description' => 'nullable|string',
+            'form.location' => 'nullable|string|max:255',
+            'form.capacity' => 'nullable|integer|min:1',
+            'form.is_public' => 'boolean',
+        ])['form'];
+
+        if (($data['end_at'] ?? '') === '') {
+            $data['end_at'] = null;
+        }
+
+        Event::whereKey($this->editingId)->update([
+            'title' => $data['title'],
+            'start_at' => $data['start_at'],
+            'end_at' => $data['end_at'],
+            'category' => $data['category'],
+            'description' => $data['description'],
+            'location' => $data['location'],
+            'capacity' => $data['capacity'],
+            'is_public' => (bool) ($data['is_public'] ?? true),
+        ]);
+
+        $this->showEdit = false;
+    }
+
+    public function confirmDelete(int $id): void
+    {
+        $this->closeModals();
+        $this->editingId = $id;
+        $this->participantsEventId = null;
+        $this->showDelete = true;
+    }
+
+    public function destroy(): void
+    {
+        Event::whereKey($this->editingId)->delete();
+        $this->showDelete = false;
+    }
+
+    public function openParticipants(int $eventId): void
+    {
+        $this->closeModals();
+        $this->participantsEventId = $eventId;
+        $this->showParticipants = true;
+    }
+
     public function toggleCheckIn(int $eventId, int $participantId): void
     {
-        $reg = EventRegistration::find($participantId);
-        if (! $reg) {
+        $reg = EventRegistration::whereKey($participantId)->where('event_id', $eventId)->first();
+        if (! $reg instanceof EventRegistration) {
             return;
         }
         $att = Attendance::firstOrCreate(['event_id' => $eventId, 'registration_id' => $reg->id]);
@@ -90,23 +196,47 @@ class EventsManager extends Component
         $att->save();
     }
 
+    protected function participants(): array
+    {
+        if (! $this->participantsEventId) {
+            return [];
+        }
+
+        $rows = EventRegistration::query()
+            ->where('event_id', $this->participantsEventId)
+            ->orderBy('id')
+            ->get(['id', 'event_id', 'name', 'email'])
+            ->all();
+
+        $ids = array_map(fn ($r) => $r->id, $rows);
+        $checked = Attendance::query()
+            ->where('event_id', $this->participantsEventId)
+            ->whereIn('registration_id', $ids)
+            ->whereNotNull('checked_in_at')
+            ->pluck('registration_id')
+            ->all();
+
+        $checkedSet = array_fill_keys($checked, true);
+
+        return array_map(function ($r) use ($checkedSet) {
+            return [
+                'id' => $r->id,
+                'name' => $r->name,
+                'email' => $r->email,
+                'checked_in' => isset($checkedSet[$r->id]),
+            ];
+        }, $rows);
+    }
+
     public function render()
     {
-        $participants = [];
-        foreach (Event::with('registrations')->get() as $e) {
-            $participants[$e->id] = $e->registrations->map(function ($r) {
-                $checked = Attendance::where('registration_id', $r->id)->where('event_id', $r->event_id)->whereNotNull('checked_in_at')->exists();
-
-                return ['id' => $r->id, 'name' => $r->name, 'checked_in' => $checked];
-            })->toArray();
-        }
-        $this->participants = $participants;
-        $this->events = $this->getFiltered();
-
         return view('livewire.events-manager', [
-            'paginator' => $this->paginator(),
-            'events' => $this->events,
-            'participants' => $this->participants,
+            'paginator' => Event::query()
+                ->when($this->search !== '', fn ($q) => $q->where('title', 'like', '%'.$this->search.'%'))
+                ->orderByDesc('start_at')
+                ->paginate($this->perPage),
+            'participants' => $this->participants(),
+            'participantsEventId' => $this->participantsEventId,
         ]);
     }
 }
