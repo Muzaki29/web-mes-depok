@@ -25,8 +25,24 @@
 <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
     <x-card class="lg:col-span-2">
         <x-slot:title>Data Akun</x-slot:title>
-        <form method="POST" action="{{ route('member.profile.save') }}" class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <form method="POST" action="{{ route('member.profile.save') }}" enctype="multipart/form-data" class="grid grid-cols-1 sm:grid-cols-2 gap-4">
             @csrf
+            {{-- Avatar Upload --}}
+            <div class="sm:col-span-2">
+                <label class="text-sm text-gray-600">Foto Profil</label>
+                <div class="mt-2 flex items-center gap-4">
+                    @php
+                        $avatarUrl = $user->avatar
+                            ? \Illuminate\Support\Facades\Storage::disk('public')->url($user->avatar)
+                            : 'https://ui-avatars.com/api/?name=' . urlencode($user->name) . '&background=16a34a&color=fff';
+                    @endphp
+                    <img src="{{ $avatarUrl }}" alt="Avatar" class="h-16 w-16 rounded-full object-cover ring-2 ring-emerald-100" id="avatar-preview" />
+                    <div>
+                        <input type="file" name="avatar" accept="image/jpeg,image/png,image/webp" class="text-sm text-gray-600 file:mr-3 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-medium file:bg-emerald-50 file:text-emerald-700 hover:file:bg-emerald-100" onchange="previewAvatar(this)" />
+                        <p class="mt-1 text-xs text-gray-500">JPG, PNG, atau WebP. Maks 2MB.</p>
+                    </div>
+                </div>
+            </div>
             <div class="sm:col-span-2">
                 <label class="text-sm text-gray-600">Nama</label>
                 <input name="name" class="mt-1 w-full rounded-md border-gray-300" value="{{ old('name', $user->name) }}" />
@@ -84,4 +100,16 @@
         @endif
     </x-card>
 </div>
+
+<script>
+function previewAvatar(input) {
+    if (input.files && input.files[0]) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            document.getElementById('avatar-preview').src = e.target.result;
+        };
+        reader.readAsDataURL(input.files[0]);
+    }
+}
+</script>
 @endsection

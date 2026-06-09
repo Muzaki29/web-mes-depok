@@ -4,17 +4,22 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>{{ $title ?? config('app.name', 'Org Portal') }}</title>
-    <link rel="preconnect" href="https://fonts.bunny.net">
-    <link href="https://fonts.bunny.net/css?family=instrument-sans:400,500,600,700" rel="stylesheet" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>[x-cloak]{display:none!important}</style>
     @if (file_exists(public_path('build/manifest.json')) || file_exists(public_path('hot')))
         @vite(['resources/css/app.css','resources/js/app.js'])
     @else
         <script>
-            window.tailwind=window.tailwind||{};window.tailwind.config={theme:{extend:{colors:{brand:'#16a34a'}}}}
+            window.tailwind=window.tailwind||{};window.tailwind.config={theme:{extend:{colors:{brand:'#16a34a'},fontFamily:{sans:['DM Sans','ui-sans-serif','system-ui','sans-serif'],heading:['Manrope','ui-sans-serif','system-ui','sans-serif']}}}}
         </script>
-        <script src="https://cdn.tailwindcss.com/4.0.0"></script>
+        <script src="https://cdn.tailwindcss.com"></script>
     @endif
+    <style>
+        body{font-family:'DM Sans',ui-sans-serif,system-ui,sans-serif}
+        h1,h2,h3,h4,.font-heading{font-family:'Manrope',ui-sans-serif,system-ui,sans-serif}
+    </style>
     @livewireStyles
 </head>
 <body class="font-sans antialiased bg-gray-50 text-gray-900">
@@ -28,9 +33,9 @@
                             <svg class="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
                         </button>
                         @endif
-                        <a href="{{ url('/') }}" class="flex items-center gap-2 {{ request()->is('admin/*') ? 'lg:pl-3' : '' }}">
-                            <span class="inline-flex h-9 w-9 items-center justify-center rounded-md bg-emerald-600 text-white font-semibold">EC</span>
-                            <span class="font-semibold text-lg">EconoComm</span>
+                        <a href="{{ url('/') }}" class="flex items-center gap-2.5 {{ request()->is('admin/*') ? 'lg:pl-3' : '' }}">
+                            <img src="{{ asset('Logo MES.jpg') }}" alt="Logo MES Depok" class="h-9 w-9 rounded-lg object-cover shadow-sm ring-1 ring-gray-200/60" />
+                            <span class="font-heading font-bold text-lg tracking-tight">MES Depok</span>
                         </a>
                     </div>
                     <div class="flex items-center gap-3">
@@ -151,6 +156,12 @@
                                         'active' => request()->is('admin/programs*'),
                                         'icon' => '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 2l1.5 4.5L18 8l-4.5 1.5L12 14l-1.5-4.5L6 8l4.5-1.5L12 2z" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M5 13l1 3 3 1-3 1-1 3-1-3-3-1 3-1 1-3z" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>',
                                     ],
+                                    'organization' => [
+                                        'label' => 'Struktur Organisasi',
+                                        'href' => url('/admin/organization'),
+                                        'active' => request()->is('admin/organization*'),
+                                        'icon' => '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+                                    ],
                                     'events' => [
                                         'label' => 'Agenda',
                                         'href' => url('/admin/events'),
@@ -263,11 +274,11 @@
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
                 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
                     <div>
-                        <div class="flex items-center gap-2">
-                            <span class="inline-flex h-9 w-9 items-center justify-center rounded-md bg-emerald-600 text-white font-semibold">EC</span>
-                            <span class="font-semibold text-lg text-white">EconoComm</span>
+                        <div class="flex items-center gap-2.5">
+                            <img src="{{ asset('Logo MES.jpg') }}" alt="Logo MES Depok" class="h-10 w-10 rounded-lg object-cover ring-1 ring-white/10 shadow-lg" />
+                            <span class="font-heading font-bold text-lg text-white tracking-tight">MES Depok</span>
                         </div>
-                        <p class="mt-3 text-sm text-gray-400">Membangun komunitas ekonomi yang berkelanjutan melalui praktik etis dan pertumbuhan kolaboratif.</p>
+                        <p class="mt-3 text-sm text-gray-400">Masyarakat Ekonomi Syariah Kota Depok — Menebar manfaat untuk umat Depok berdaulat.</p>
                     </div>
                     <div>
                         <p class="text-sm font-semibold text-white">Tautan Cepat</p>
@@ -291,14 +302,14 @@
                         <p class="text-sm font-semibold text-white">Kontak</p>
                         <ul class="mt-3 space-y-2 text-sm">
                             <li><a class="hover:text-white" href="mailto:info@mesdepok.org">info@mesdepok.org</a></li>
-                            <li><span>+62 812-0000-0000</span></li>
+                            <li><span>+62 812-3456-7890</span></li>
                             <li><span>Kota Depok</span></li>
                             <li><span>Jawa Barat, Indonesia</span></li>
                         </ul>
                     </div>
                 </div>
                 <div class="mt-8 border-t border-gray-800 pt-6 flex items-center justify-between text-sm">
-                    <p class="text-gray-400">© {{ date('Y') }} EconoComm. Hak cipta dilindungi.</p>
+                    <p class="text-gray-400">© {{ date('Y') }} MES Kota Depok. Hak cipta dilindungi.</p>
                     <div class="flex items-center gap-6">
                         <a href="{{ route('about') }}" class="hover:text-white">Kebijakan Privasi</a>
                         <a href="{{ route('about.statute') }}" class="hover:text-white">Syarat & Ketentuan</a>
