@@ -72,6 +72,47 @@ Route::get('/programs/{slug}', [PublicProgramController::class, 'show'])->name('
 Route::get('/membership', [PublicMembershipController::class, 'create'])->name('membership');
 Route::post('/membership', [PublicMembershipController::class, 'store'])->middleware('throttle:10,1')->name('membership.submit');
 
+Route::get('/search', function (Request $request) {
+    $q = trim((string) $request->input('q', ''));
+    $articles = collect();
+    $events = collect();
+    $programs = collect();
+
+    if ($q !== '') {
+        $like = '%'.$q.'%';
+
+        $articles = Article::where('status', 'published')
+            ->where(function ($w) use ($like) {
+                $w->where('title', 'like', $like)
+                    ->orWhere('excerpt', 'like', $like)
+                    ->orWhere('body', 'like', $like);
+            })
+            ->orderByDesc('published_at')
+            ->limit(24)
+            ->get();
+
+        $events = Event::where(function ($w) use ($like) {
+            $w->where('title', 'like', $like)
+                ->orWhere('description', 'like', $like)
+                ->orWhere('location', 'like', $like);
+        })
+            ->orderByDesc('start_at')
+            ->limit(24)
+            ->get();
+
+        $programs = \App\Models\Program::where('status', 'active')
+            ->where(function ($w) use ($like) {
+                $w->where('title', 'like', $like)
+                    ->orWhere('description', 'like', $like);
+            })
+            ->latest()
+            ->limit(24)
+            ->get();
+    }
+
+    return view('public.search', compact('q', 'articles', 'events', 'programs'));
+})->middleware('throttle:60,1')->name('search');
+
 Route::view('/about', 'public.about.profile')->name('about');
 Route::view('/about/anggaran-dasar', 'public.about.statute')->name('about.statute');
 Route::view('/about/visi-misi', 'public.about.vision')->name('about.vision');
@@ -332,6 +373,7 @@ Route::prefix('admin')->middleware(['auth', 'role:super_admin,org_admin'])->grou
         return redirect()->route('admin.appearance.home')->with('status', 'Perubahan landing page berhasil disimpan.');
     })->name('admin.appearance.home.save');
     Route::resource('programs', App\Http\Controllers\Admin\ProgramController::class)->names('admin.programs');
+    Route::view('/organization', 'admin.organization.index')->name('admin.organization');
 });
 
 Route::prefix('member')->middleware(['auth', 'role:member,super_admin,org_admin'])->group(function () {
@@ -351,6 +393,7 @@ Route::prefix('member')->middleware(['auth', 'role:member,super_admin,org_admin'
             'phone' => ['nullable', 'string', 'max:30'],
             'organization' => ['nullable', 'string', 'max:255'],
             'password' => ['nullable', 'string', 'min:8', 'confirmed'],
+            'avatar' => ['nullable', 'image', 'mimes:jpeg,png,webp', 'max:2048'],
         ]);
 
         $user->name = $validated['name'];
@@ -360,6 +403,17 @@ Route::prefix('member')->middleware(['auth', 'role:member,super_admin,org_admin'
         if (($validated['password'] ?? '') !== '') {
             $user->password = Hash::make($validated['password']);
         }
+
+        // Handle avatar upload
+        if ($request->hasFile('avatar')) {
+            // Delete old avatar if exists
+            if ($user->avatar && \Illuminate\Support\Facades\Storage::disk('public')->exists($user->avatar)) {
+                \Illuminate\Support\Facades\Storage::disk('public')->delete($user->avatar);
+            }
+            $path = $request->file('avatar')->store('avatars', 'public');
+            $user->avatar = $path;
+        }
+
         $user->save();
 
         Member::query()

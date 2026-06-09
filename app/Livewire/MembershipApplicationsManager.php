@@ -4,8 +4,11 @@ namespace App\Livewire;
 
 use App\Models\Member;
 use App\Models\MembershipApplication;
+use App\Models\User;
 use App\Notifications\MembershipApplicationStatusChanged;
+use App\Notifications\MembershipCredentials;
 use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Str;
 use Livewire\Component;
@@ -62,12 +65,44 @@ class MembershipApplicationsManager extends Component
     {
         $app = MembershipApplication::findOrFail($this->reviewId);
         $app->update(['status' => 'approved']);
+
+        // Find or create user account
+        $user = User::where('email', $app->email)->first();
+        $plainPassword = null;
+
+        if (! $user) {
+            $plainPassword = Str::random(10);
+            $user = User::create([
+                'name' => $app->name,
+                'email' => $app->email,
+                'password' => Hash::make($plainPassword),
+                'role' => 'member',
+                'phone' => $app->phone,
+                'organization' => $app->organization,
+            ]);
+        } else {
+            $user->update(['role' => 'member']);
+        }
+
+        // Create member record linked to user
+        $membershipNo = 'MD-' . Str::upper(Str::random(8));
         Member::create([
+            'user_id' => $user->id,
             'name' => $app->name,
-            'membership_no' => 'MD-'.Str::upper(Str::random(8)),
+            'membership_no' => $membershipNo,
             'status' => 'active',
+            'valid_until' => now()->addYear(),
         ]);
-        Notification::route('mail', $app->email)->notify(new MembershipApplicationStatusChanged($app, 'Disetujui'));
+
+        // Send appropriate notification
+        if ($plainPassword) {
+            // New user — send credentials
+            $user->notify(new MembershipCredentials($app->name, $app->email, $plainPassword, $membershipNo));
+        } else {
+            // Existing user — send approval notice
+            Notification::route('mail', $app->email)->notify(new MembershipApplicationStatusChanged($app, 'Disetujui'));
+        }
+
         $this->showReview = false;
     }
 
